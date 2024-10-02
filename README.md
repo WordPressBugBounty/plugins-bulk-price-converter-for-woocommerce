@@ -1,0 +1,1 @@
+# plugins-bulk-price-converter-for-woocommerce
