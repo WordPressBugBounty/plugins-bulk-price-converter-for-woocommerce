@@ -1,9 +1,9 @@
 === Price Update: Bulk Pricing Editor for WooCommerce ===
-Contributors: wpcodefactory, omardabbas, karzin, anbinder, algoritmika, kousikmukherjeeli
-Tags: woocommerce, bulk, price, converter, woo commerce, pricing, bulk pricing, sale, editor
+Contributors: wpcodefactory, algoritmika, anbinder, karzin, omardabbas, kousikmukherjeeli
+Tags: woocommerce, bulk, price, converter, bulk pricing
 Requires at least: 4.4
-Tested up to: 6.6
-Stable tag: 1.9.8
+Tested up to: 6.8
+Stable tag: 2.0.0
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -15,12 +15,12 @@ Change ALL your products prices in a single click for any WooCommerce store, set
 Easy to settle
 And more important if you dont need round prices, its free” – ⭐⭐⭐⭐⭐  [pey0ne](https://wordpress.org/support/topic/definitely-the-best-plagin-for-the-need/)
 
-Editing the price of one item? That’s a simple task. 
+Editing the price of one item? That’s a simple task.
 Editing the price of thousands of items? You either will spend days doing it manually and you’ll never finish, hire someone to do it and he probably will make mistakes, or install our Bulk Price Editor for WooCommerce Plugin.
 
 With a simple click of a button you can change the price of any number of items you want, without any mistakes, and saving hours of labor for more impactful tasks in your store.
 
-The efficiency and convinence of using our plugin will make you wish you had knew it before, but fret not, the features in our plugin will compensate for all the wasted hours you’ve spent manually editing the price of each item in your store.
+The efficiency and convenience of using our plugin will make you wish you had knew it before, but fret not, the features in our plugin will compensate for all the wasted hours you’ve spent manually editing the price of each item in your store.
 
 #### Useful Links ####
 * **[Plugin Main Page](https://wpfactory.com/item/bulk-price-editor-for-woocommerce/?utm_source=wporg&utm_medium=organic&utm_campaign=readme "Plugin Main Page")**
@@ -39,11 +39,11 @@ Bulk Price Editor is a really simple feature to use yet it's extremely powerful.
 
 ### 🚀 **Change all prices to a fixed amount in bulk** ###
 Set all product prices into a specific price that you determine. This is extremely helpful when you're selling closely priced products and want to apply a sitewide offer, so you can sell all products on your site for $10 for example (similar to Udemy offers).
-### 🚀 **Bulk edit prices by multiplying prices with any value** ### 
-Eventhough the feature name is 'multiply' you can use it to reduce product prices by multiplying by fractions, so if you want to run a sitewide discount by %30 for example you can multiply by 0.7 so the prices change to 70% of what it has originally been that way a %30 perecent discount has been applied.
+### 🚀 **Bulk edit prices by multiplying prices with any value** ###
+Even though the feature name is 'multiply' you can use it to reduce product prices by multiplying by fractions, so if you want to run a sitewide discount by %30 for example you can multiply by 0.7 so the prices change to 70% of what it has originally been that way a %30 percent discount has been applied.
 ### 🚀 **Increase product prices by a fixed amount** ###
 If your profit margins drop due to changes in wholesale prices, or anywhere in the supply chain, you can compensate these changes by adding a fixed amount to your prices so your profit margins is not negatively impacted.
-### 🚀 **Bulk edit sale or regular prices (or both)** ###
+### 🚀 **Bulk edit sale or regular prices (or both)** ###
 Choose to which type of prices would like to apply these changes: regular price, sales price, or both.
 ### 🚀 **Select to bulk edit prices by category** ###
 Choose to which category of items do you want to apply these changes, to your whole store or to a specific product category that you specifically want to apply these changes.
@@ -55,22 +55,22 @@ Choose to which category of items do you want to apply these changes, to your wh
 
 ## 🏆 Pro Version ##
 
-Our Pro features further expands the capabilites of our plugin so you can have full control on the prices of the items you sell in your store, in addition to the main features here are the pro ones:
+Our Pro features further expands the capabilities of our plugin so you can have full control on the prices of the items you sell in your store, in addition to the main features here are the pro ones:
 
 ### 🏆 **Change Prices by Dividing by fixed amount** ###
-In case you want to decrease all of your product prices by a fixed amount, for a sitewide sale or a discount for example, you can divide all product prices by the amount you specifiy.
+In case you want to decrease all of your product prices by a fixed amount, for a sitewide sale or a discount for example, you can divide all product prices by the amount you specify.
 ### 🏆 **Subtract fixed amount from all products prices** ###
 If you want to apply a coupon for example you will want to subtract the coupon amount from the price of the items, that's when will the subtract all prices by feature might come in handy.
 ### 🏆 **Bulk edit products prices by tags** ###
 Specify which tags do you want your changes to be applied to, if you want to apply to all tags you can leave it at 'Any'.
-### 🏆 **Filteration based on attributes** ###
-based on the attributes of your website you can control which labels and products will the prices be applied to allowing for full customization and maximum control over your site's pricing strategy. 
+### 🏆 **Filtration based on attributes** ###
+based on the attributes of your website you can control which labels and products will the prices be applied to allowing for full customization and maximum control over your site's pricing strategy.
 ### 🏆 **Rounding function** ###
 Choose how do you want to round your prices to the upper limit (Ceil), to the lower limit (Floor) or you don't want any rounding.
-### 🏆 **Rounding cooeffecient** ###
-Choose the decimal accuracy of the rounding, do you want to round to one digit after the dicimal point or two digits or more than that, it's all in your control.
+### 🏆 **Rounding coefficient** ###
+Choose the decimal accuracy of the rounding, do you want to round to one digit after the decimal point or two digits or more than that, it's all in your control.
 ### 🏆 **Apply Charm Pricing** ###
-You can even implment charm pricing on your store using our plugin, by utilizing the psychological that govern the human nature you can increase the sales and revenue of your ecommerce store.
+You can even implement charm pricing on your store using our plugin, by utilizing the psychological that govern the human nature you can increase the sales and revenue of your ecommerce store.
 
 ## 💯 Why WPFactory?##
 
@@ -83,7 +83,7 @@ ___
 
 ## What's Next? Check More Plugins by WPFactory##
 
-If you're enjoying our plugin, we'd love for you to explore our other offerings. WPFactory has a diverse range of plugins tailored to enhance your experience. 
+If you're enjoying our plugin, we'd love for you to explore our other offerings. WPFactory has a diverse range of plugins tailored to enhance your experience.
 
 Dive in and discover more tools to empower your WooCommerce Store!
 
@@ -129,9 +129,19 @@ Also the support are a very professional persons. Like it!” – ⭐⭐⭐⭐�
 You can either download the plugin from WordPress.org plugins and then upload it (as .zip file) to the `/wp-content/plugins/` directory.
 Or search for it in the plugins directory from inside your WordPress website (Plugins >> Add New) and then install it.
 Then activate the plugin through the "Plugins" menu in WordPress.
-Finally, you can start using the plugin at "WooCommerce > Settings > Bulk Price Converter".
+Finally, you can start using the plugin at "WPFactory > Bulk Price Converter".
 
 == Changelog ==
+
+= 2.0.0 - 26/06/2025 =
+* Fix - Deprecated "Creation of dynamic property".
+* Fix - Resolved warning "Function _load_textdomain_just_in_time was called incorrectly" on some admin pages.
+* Dev - Moved settings to WPFactory menu.
+* Dev - Added WPFactory Key Manager.
+* Dev - Added WPFactory Admin Menu.
+* Dev - Added WPFactory Cross-Selling.
+* WC tested up to: 9.9.
+* Tested up to: 6.8.
 
 = 1.9.8 - 31/07/2024 =
 * WC tested up to: 9.1.
@@ -199,19 +209,19 @@ Finally, you can start using the plugin at "WooCommerce > Settings > Bulk Price 
 * Verified compatibility with WooCommerce 5.3
 
 = 1.7.3 - 20/04/2021 =
-* Tested compatibilty with WC 5.2 & WP 5.7
+* Tested compatibility with WC 5.2 & WP 5.7
 
 = 1.7.2 - 28/02/2021 =
-* Tested compatibilty with WC 5.0
+* Tested compatibility with WC 5.0
 
 = 1.7.1 - 27/01/2021 =
-* Tested compatibilty with WC 4.9 & WP 5.6
+* Tested compatibility with WC 4.9 & WP 5.6
 
 = 1.7 - 21/11/2020 =
-* Verified compatibilty with WC 4.7
+* Verified compatibility with WC 4.7
 
 = 1.6.4 - 26/08/2020 =
-* Verified compatibilty with WC 4.4 & WP 5.5
+* Verified compatibility with WC 4.4 & WP 5.5
 
 = 1.6.3 - 13/03/2020 =
 * Dev - Input sanitized.

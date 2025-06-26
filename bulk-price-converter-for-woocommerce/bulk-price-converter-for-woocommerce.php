@@ -2,29 +2,27 @@
 /*
 Plugin Name: Price Update: Bulk Pricing Editor for WooCommerce
 Plugin URI: https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/
-Description: Save your time with all-in-one bulk price converter for all your WooCommerce store prodducts, change your prices, add a fixed amount or multiply prices for all your products with a couple of clicks.
-Version: 1.9.8
+Description: Save your time with all-in-one bulk price converter for all your WooCommerce store products, change your prices, add a fixed amount or multiply prices for all your products with a couple of clicks.
+Version: 2.0.0
 Author: WPFactory
 Author URI: https://wpfactory.com
+Requires at least: 4.4
 Text Domain: bulk-price-converter-for-woocommerce
 Domain Path: /langs
-Copyright: © 2023 WPFactory
-WC tested up to: 9.1
+WC tested up to: 9.9
 Requires Plugins: woocommerce
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 */
 
-// Exit if accessed directly
-if ( ! defined( 'ABSPATH' ) ) exit;
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Alg_WC_Bulk_Price_Converter' ) ) :
 
 /**
  * Main Alg_WC_Bulk_Price_Converter Class
  *
- * @class   Alg_WC_Bulk_Price_Converter
- * @version 1.9.7
+ * @version 2.0.0
  * @since   1.0.0
  */
 final class Alg_WC_Bulk_Price_Converter {
@@ -35,7 +33,7 @@ final class Alg_WC_Bulk_Price_Converter {
 	 * @var   string
 	 * @since 1.2.0
 	 */
-	public $version = '1.9.8';
+	public $version = '2.0.0';
 
 	/**
 	 * @var Alg_WC_Bulk_Price_Converter The single instance of the class
@@ -43,7 +41,15 @@ final class Alg_WC_Bulk_Price_Converter {
 	protected static $_instance = null;
 
 	/**
-	 * Main Alg_WC_Bulk_Price_Converter Instance
+	 * core.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	public $core;
+
+	/**
+	 * Main Alg_WC_Bulk_Price_Converter Instance.
 	 *
 	 * Ensures only one instance of Alg_WC_Bulk_Price_Converter is loaded or can be loaded.
 	 *
@@ -60,7 +66,9 @@ final class Alg_WC_Bulk_Price_Converter {
 	/**
 	 * Alg_WC_Bulk_Price_Converter Constructor.
 	 *
-	 * @version 1.5.1
+	 * @version 2.0.0
+	 * @since   1.0.0
+	 *
 	 * @access  public
 	 */
 	function __construct() {
@@ -68,13 +76,21 @@ final class Alg_WC_Bulk_Price_Converter {
 		// Check for active plugins
 		if (
 			! $this->is_plugin_active( 'woocommerce/woocommerce.php' ) ||
-			( 'bulk-price-converter-for-woocommerce.php' === basename( __FILE__ ) && $this->is_plugin_active( 'bulk-price-converter-for-woocommerce-pro/bulk-price-converter-for-woocommerce-pro.php' ) )
+			(
+				'bulk-price-converter-for-woocommerce.php' === basename( __FILE__ ) &&
+				$this->is_plugin_active( 'bulk-price-converter-for-woocommerce-pro/bulk-price-converter-for-woocommerce-pro.php' )
+			)
 		) {
 			return;
 		}
 
+		// Load libs
+		if ( is_admin() ) {
+			require_once plugin_dir_path( __FILE__ ) . 'vendor/autoload.php';
+		}
+
 		// Set up localisation
-		load_plugin_textdomain( 'bulk-price-converter-for-woocommerce', false, dirname( plugin_basename( __FILE__ ) ) . '/langs/' );
+		add_action( 'init', array( $this, 'localize' ) );
 
 		// Pro
 		if ( 'bulk-price-converter-for-woocommerce-pro.php' === basename( __FILE__ ) ) {
@@ -91,6 +107,20 @@ final class Alg_WC_Bulk_Price_Converter {
 	}
 
 	/**
+	 * localize.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	function localize() {
+		load_plugin_textdomain(
+			'bulk-price-converter-for-woocommerce',
+			false,
+			dirname( plugin_basename( __FILE__ ) ) . '/langs/'
+		);
+	}
+
+	/**
 	 * is_plugin_active.
 	 *
 	 * @version 1.5.1
@@ -99,8 +129,17 @@ final class Alg_WC_Bulk_Price_Converter {
 	function is_plugin_active( $plugin ) {
 		return ( function_exists( 'is_plugin_active' ) ? is_plugin_active( $plugin ) :
 			(
-				in_array( $plugin, apply_filters( 'active_plugins', ( array ) get_option( 'active_plugins', array() ) ) ) ||
-				( is_multisite() && array_key_exists( $plugin, ( array ) get_site_option( 'active_sitewide_plugins', array() ) ) )
+				in_array(
+					$plugin,
+					apply_filters( 'active_plugins', ( array ) get_option( 'active_plugins', array() ) )
+				) ||
+				(
+					is_multisite() &&
+					array_key_exists(
+						$plugin,
+						( array ) get_site_option( 'active_sitewide_plugins', array() )
+					)
+				)
 			)
 		);
 	}
@@ -120,17 +159,22 @@ final class Alg_WC_Bulk_Price_Converter {
 	/**
 	 * admin.
 	 *
-	 * @version 1.4.3
+	 * @version 2.0.0
 	 * @since   1.4.3
 	 */
 	function admin() {
 		// Action links
 		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'action_links' ) );
+
+		// Adds cross-selling library.
+		add_action( 'init', array( $this, 'add_cross_selling_library' ) );
+
+		// Move WC Settings tab to WPFactory menu.
+		add_action( 'init', array( $this, 'move_wc_settings_tab_to_wpfactory_menu' ) );
+
 		// Settings
 		add_filter( 'woocommerce_get_settings_pages', array( $this, 'add_woocommerce_settings_tab' ) );
-		require_once( 'includes/settings/class-alg-wc-bulk-price-converter-settings-section.php' );
-		$this->settings = array();
-		$this->settings['general'] = require_once( 'includes/settings/class-alg-wc-bulk-price-converter-settings-general.php' );
+
 		// Version update
 		if ( get_option( 'alg_wc_bulk_price_converter_version', '' ) !== $this->version ) {
 			add_action( 'admin_init', array( $this, 'version_updated' ) );
@@ -138,21 +182,76 @@ final class Alg_WC_Bulk_Price_Converter {
 	}
 
 	/**
+	 * add_cross_selling_library.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 *
+	 * @return  void
+	 */
+	function add_cross_selling_library(){
+		if ( ! class_exists( '\WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling' ) ) {
+			return;
+		}
+
+		// Cross-selling library.
+		$cross_selling = new \WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling();
+		$cross_selling->setup( array( 'plugin_file_path' => __FILE__ ) );
+		$cross_selling->init();
+	}
+
+	/**
+	 * move_wc_settings_tab_to_wpfactory_submenu.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 *
+	 * @return  void
+	 */
+	function move_wc_settings_tab_to_wpfactory_menu() {
+		if ( ! class_exists( '\WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu' ) ) {
+			return;
+		}
+
+		$wpf_admin_menu = \WPFactory\WPFactory_Admin_Menu\WPFactory_Admin_Menu::get_instance();
+		if ( method_exists( $wpf_admin_menu, 'move_wc_settings_tab_to_wpfactory_menu' ) ) {
+			$wpf_admin_menu->move_wc_settings_tab_to_wpfactory_menu( array(
+				'wc_settings_tab_id' => 'alg_wc_bulk_price_converter',
+				'menu_title'         => __( 'Bulk Price Converter', 'bulk-price-converter-for-woocommerce' ),
+				'page_title'         => __( 'Price Update: Bulk Pricing Editor for WooCommerce', 'bulk-price-converter-for-woocommerce' ),
+				'plugin_icon'        => array(
+					'get_url_method'    => 'wporg_plugins_api',
+					'wporg_plugin_slug' => 'bulk-price-converter-for-woocommerce',
+				),
+			) );
+		}
+	}
+
+	/**
 	 * Show action links on the plugin screen.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.0
+	 *
 	 * @param   mixed $links
 	 * @return  array
 	 */
 	function action_links( $links ) {
 		$custom_links = array();
-		$custom_links[] = '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=alg_wc_bulk_price_converter' ) . '">' . __( 'Settings', 'woocommerce' ) . '</a>';
-		$custom_links[] = '<a style="font-weight: bold;" target="_blank" href="' . esc_url( 		'https://wordpress.org/support/plugin/bulk-price-converter-for-woocommerce/reviews/#new-post' ) . '">' .
-		__( 'Review Us', 'bulk-price-converter-for-woocommerce' ) . '</a>';
+
+		$custom_links[] = '<a href="' . admin_url( 'admin.php?page=wc-settings&tab=alg_wc_bulk_price_converter' ) . '">' .
+			__( 'Settings', 'bulk-price-converter-for-woocommerce' ) .
+		'</a>';
+
+		$custom_links[] = '<a style="font-weight: bold;" target="_blank" href="' . esc_url( 'https://wordpress.org/support/plugin/bulk-price-converter-for-woocommerce/reviews/#new-post' ) . '">' .
+			__( 'Review Us', 'bulk-price-converter-for-woocommerce' ) .
+		'</a>';
+
 		if ( 'bulk-price-converter-for-woocommerce.php' === basename( __FILE__ ) ) {
 			$custom_links[] = '<a style="color: green; font-weight: bold;" target="_blank" href="' . esc_url( 'https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/' ) . '">' .
-				__( 'Go Pro', 'bulk-price-converter-for-woocommerce' ) . '</a>';
+				__( 'Go Pro', 'bulk-price-converter-for-woocommerce' ) .
+			'</a>';
 		}
+
 		return array_merge( $custom_links, $links );
 	}
 
@@ -209,11 +308,22 @@ if ( ! function_exists( 'alg_wc_bulk_price_converter' ) ) {
 	}
 }
 
+/**
+ * init.
+ *
+ * @todo load on `plugins_loaded`
+ */
 alg_wc_bulk_price_converter();
 
+/**
+ * before_woocommerce_init.
+ */
 add_action( 'before_woocommerce_init', function() {
 	if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
-		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', dirname(__FILE__), true );
+		\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility(
+			'custom_order_tables',
+			dirname(__FILE__),
+			true
+		);
 	}
 } );
-

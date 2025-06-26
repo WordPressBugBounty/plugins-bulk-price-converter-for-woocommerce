@@ -2,12 +2,13 @@
 /**
  * Bulk Price Converter - Settings
  *
- * @version 1.5.0
+ * @version 2.0.0
  * @since   1.0.0
+ *
  * @author  WPFactory
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Alg_WC_Settings_Bulk_Price_Converter' ) ) :
 
@@ -16,7 +17,7 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 	/**
 	 * Constructor.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.0
 	 * @since   1.0.0
 	 */
 	function __construct() {
@@ -24,6 +25,10 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 		$this->label = __( 'Bulk Price Converter', 'bulk-price-converter-for-woocommerce' );
 		add_action( 'woocommerce_admin_field_bulk_price_converter_custom_link', array( $this, 'output_custom_link' ) );
 		parent::__construct();
+
+		require_once plugin_dir_path( __FILE__ ) . 'class-alg-wc-bulk-price-converter-settings-section.php';
+		require_once plugin_dir_path( __FILE__ ) . 'class-alg-wc-bulk-price-converter-settings-general.php';
+
 	}
 
 	/**
@@ -51,24 +56,27 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 	 */
 	function get_settings() {
 		global $current_section;
-		return array_merge( apply_filters( 'woocommerce_get_settings_' . $this->id . '_' . $current_section, array() ), array(
+		return array_merge(
+			apply_filters( 'woocommerce_get_settings_' . $this->id . '_' . $current_section, array() ),
 			array(
-				'title'     => __( 'Reset Settings', 'bulk-price-converter-for-woocommerce' ),
-				'type'      => 'title',
-				'id'        => $this->id . '_' . $current_section . '_reset_options',
-			),
-			array(
-				'title'     => __( 'Reset section settings', 'bulk-price-converter-for-woocommerce' ),
-				'desc'      => '<strong>' . __( 'Reset', 'bulk-price-converter-for-woocommerce' ) . '</strong>',
-				'id'        => $this->id . '_' . $current_section . '_reset',
-				'default'   => 'no',
-				'type'      => 'checkbox',
-			),
-			array(
-				'type'      => 'sectionend',
-				'id'        => $this->id . '_' . $current_section . '_reset_options',
-			),
-		) );
+				array(
+					'title'     => __( 'Reset Settings', 'bulk-price-converter-for-woocommerce' ),
+					'type'      => 'title',
+					'id'        => $this->id . '_' . $current_section . '_reset_options',
+				),
+				array(
+					'title'     => __( 'Reset section settings', 'bulk-price-converter-for-woocommerce' ),
+					'desc'      => '<strong>' . __( 'Reset', 'bulk-price-converter-for-woocommerce' ) . '</strong>',
+					'id'        => $this->id . '_' . $current_section . '_reset',
+					'default'   => 'no',
+					'type'      => 'checkbox',
+				),
+				array(
+					'type'      => 'sectionend',
+					'id'        => $this->id . '_' . $current_section . '_reset_options',
+				),
+			)
+		);
 	}
 
 	/**
@@ -93,12 +101,13 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 	/**
 	 * admin_notice_settings_reset.
 	 *
-	 * @version 1.5.0
+	 * @version 2.0.0
 	 * @since   1.5.0
 	 */
 	function admin_notice_settings_reset() {
 		echo '<div class="notice notice-warning is-dismissible"><p><strong>' .
-			__( 'Your settings have been reset.', 'bulk-price-converter-for-woocommerce' ) . '</strong></p></div>';
+			esc_html__( 'Your settings have been reset.', 'bulk-price-converter-for-woocommerce' ) .
+		'</strong></p></div>';
 	}
 
 	/**

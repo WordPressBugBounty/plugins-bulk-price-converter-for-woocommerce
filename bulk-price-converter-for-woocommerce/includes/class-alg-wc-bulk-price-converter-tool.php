@@ -2,18 +2,39 @@
 /**
  * Bulk Price Converter - Tool Class
  *
- * @version 1.6.3
+ * @version 2.0.0
  * @since   1.4.0
+ *
  * @author  WPFactory
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Alg_WC_Bulk_Price_Converter_Tool' ) ) :
 
 class Alg_WC_Bulk_Price_Converter_Tool {
 
+	/**
+	 * attribute_taxonomies.
+	 */
 	public $attribute_taxonomies;
+
+	/**
+	 * atts.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	public $atts;
+
+	/**
+	 * result.
+	 *
+	 * @version 2.0.0
+	 * @since   2.0.0
+	 */
+	public $result;
+
 	/**
 	 * Constructor.
 	 *
@@ -27,7 +48,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 		}
 		$this->attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
 	}
-	
+
 	function alg_wc_get_attribute_taxonomies(){
 		global $wpdb;
 		$raw_attribute_taxonomies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}woocommerce_attribute_taxonomies WHERE attribute_name != '' ORDER BY attribute_name ASC;" );
@@ -119,7 +140,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 		$html .= '<h2>' . __( 'General Options', 'bulk-price-converter-for-woocommerce' ) . '</h2>' . apply_filters( 'alg_wc_bpc_settings',
 			' <p><em>' . sprintf( __( 'You will need %s plugin to use Divide and Subtract options in this section.', 'bulk-price-converter-for-woocommerce' ),
 				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Converter Pro</a>' ) . '</em></p>' );
-		
+
 		$html .= '<h2>' . __( 'General Options', 'bulk-price-converter-for-woocommerce' ) . '</h2>';
 		$data_table = array();
 		$data_table[] = array(
@@ -149,7 +170,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			'<input style="min-width: 200px;" class="" type="number" step="' . $step . '" name="alg_wc_bpc_minus_to_price" id="alg_wc_bpc_minus_to_price" value="' .
 				$this->atts['minus_to_price'] . '" ' . apply_filters( 'alg_wc_bpc_settings', 'disabled' ) . '>',
 		);
-		
+
 		$data_table[] = array(
 			__( 'Price <strong>type</strong> to modify', 'bulk-price-converter-for-woocommerce' ),
 			'<select style="min-width: 200px;" name="alg_wc_bpc_price_types">' .
@@ -192,7 +213,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 				);
 			}
 		}
-		
+
 		$html .= $this->get_table_html( $data_table,
 			array( 'table_class' => 'widefat striped', 'table_heading_type' => 'vertical', 'columns_styles' => array( 'width: 200px;' ) ) );
 		// Final Price Correction
@@ -287,11 +308,11 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			'is_preview'                => isset( $_POST['alg_wc_bpc_preview_prices'] ),
 			'is_change'                 => isset( $_POST['alg_wc_bpc_change_prices'] ),
 		);
-		
+
 		if(isset($this->attribute_taxonomies) && !empty($this->attribute_taxonomies)){
 			foreach($this->attribute_taxonomies as $taxn){
 				$attr_slug = 'pa_'.$taxn->attribute_name;
-				$post_slug = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name; 
+				$post_slug = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name;
 				$return[$attr_slug] = isset( $_POST[$post_slug] )   ? sanitize_text_field( $_POST[$post_slug] )   : 'any';
 			}
 		}

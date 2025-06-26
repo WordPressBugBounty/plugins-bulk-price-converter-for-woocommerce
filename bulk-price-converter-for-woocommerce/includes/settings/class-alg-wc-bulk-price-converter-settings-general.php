@@ -4,10 +4,11 @@
  *
  * @version 1.5.0
  * @since   1.0.0
+ *
  * @author  WPFactory
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Alg_WC_Bulk_Price_Converter_Settings_General' ) ) :
 

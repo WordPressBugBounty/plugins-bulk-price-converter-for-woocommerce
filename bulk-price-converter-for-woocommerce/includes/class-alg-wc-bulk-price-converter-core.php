@@ -3,16 +3,22 @@
  * Bulk Price Converter - Core Class
  *
  * @version 1.5.0
+ * @since   1.0.0
+ *
  * @author  WPFactory
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+defined( 'ABSPATH' ) || exit;
 
 if ( ! class_exists( 'Alg_WC_Bulk_Price_Converter_Core' ) ) :
 
 class Alg_WC_Bulk_Price_Converter_Core {
 
+	/**
+	 * attribute_taxonomies.
+	 */
 	public $attribute_taxonomies;
+
 	/**
 	 * Constructor.
 	 *
@@ -22,7 +28,10 @@ class Alg_WC_Bulk_Price_Converter_Core {
 		$this->attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
 		return true;
 	}
-	
+
+	/**
+	 * alg_wc_get_attribute_taxonomies.
+	 */
 	function alg_wc_get_attribute_taxonomies(){
 		global $wpdb;
 		$raw_attribute_taxonomies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}woocommerce_attribute_taxonomies WHERE attribute_name != '' ORDER BY attribute_name ASC;" );
