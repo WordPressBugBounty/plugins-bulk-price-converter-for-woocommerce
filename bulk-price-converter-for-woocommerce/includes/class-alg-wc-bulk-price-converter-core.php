@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Core Class
  *
- * @version 1.5.0
+ * @version 2.0.2
  * @since   1.0.0
  *
  * @author  WPFactory
@@ -124,23 +124,29 @@ class Alg_WC_Bulk_Price_Converter_Core {
 	/**
 	 * change_all_products_prices.
 	 *
-	 * @version 1.5.0
-	 * @todo    [dev] (maybe) `sale_prices`: remove `( get_post_meta( $_product_id, '_' . 'price', true ) === get_post_meta( $_product_id, '_' . 'sale_price', true ) )` check
-	 * @todo    [dev] (maybe) `regular_prices`: remove `( $price !== $sale_price || $atts['multiply_prices_by'] <= 1 )` check
+	 * @version 2.0.2
+	 *
+	 * @todo    (dev) `sale_prices`: remove `( get_post_meta( $_product_id, '_' . 'price', true ) === get_post_meta( $_product_id, '_' . 'sale_price', true ) )` check?
+	 * @todo    (dev) `regular_prices`: remove `( $price !== $sale_price || $atts['multiply_prices_by'] <= 1 )` check?
 	 */
 	function change_all_products_prices( $atts ) {
+
 		if ( $atts['multiply_prices_by'] <= 0 ) {
 			return;
 		}
+
 		$offset       = 0;
 		$block_size   = get_option( 'alg_wc_bulk_price_converter_block_size', 1024 );
 		$time_limit   = get_option( 'alg_wc_bulk_price_converter_time_limit', -1 );
 		$this->result = array();
 		$this->atts   = $atts;
+
 		while ( true ) {
+
 			if ( -1 != $time_limit ) {
 				set_time_limit( $time_limit );
 			}
+
 			$args = array(
 				'post_type'      => 'product',
 				'post_status'    => 'any',
@@ -148,8 +154,8 @@ class Alg_WC_Bulk_Price_Converter_Core {
 				'offset'         => $offset,
 				'fields'         => 'ids',
 			);
+
 			if ( 'any' != $atts['product_cats'] ) {
-				// $args = apply_filters( 'alg_wc_bpc_product_query', $args, 'product_cat', $atts['product_cats'] );
 				$terms = $atts['product_cats'];
 				$args['tax_query'][] = array(
 					'taxonomy' => 'product_cat',
@@ -158,36 +164,85 @@ class Alg_WC_Bulk_Price_Converter_Core {
 					'operator' => ( 'none' != $terms ? 'IN' : 'NOT EXISTS' ),
 				);
 			}
+
 			if ( 'any' != $atts['product_tags'] ) {
 				$args = apply_filters( 'alg_wc_bpc_product_query', $args, 'product_tag', $atts['product_tags'] );
 			}
-			if(isset($this->attribute_taxonomies) && !empty($this->attribute_taxonomies)){
-				foreach($this->attribute_taxonomies as $taxn){
-					$attr_slug = 'pa_'.$taxn->attribute_name;
-					if ( 'any' != $atts[$attr_slug] ) {
-						$args = apply_filters( 'alg_wc_bpc_product_query', $args, $attr_slug, $atts[$attr_slug] );
+
+			if ( ! empty( $this->attribute_taxonomies ) ) {
+				foreach ( $this->attribute_taxonomies as $taxn ) {
+					$attr_slug = 'pa_' . $taxn->attribute_name;
+					if ( 'any' != $atts[ $attr_slug ] ) {
+						$args = apply_filters( 'alg_wc_bpc_product_query', $args, $attr_slug, $atts[ $attr_slug ] );
 					}
 				}
 			}
+
 			$loop = new WP_Query( $args );
+
 			if ( ! $loop->have_posts() ) {
 				break;
 			}
+
 			foreach ( $loop->posts as $product_id ) {
+
 				// Getting all product IDs (including variations for variable products)
 				$product_ids = array( $product_id );
 				$product     = wc_get_product( $product_id );
+
 				if ( $product->is_type( 'variable' ) ) {
-					$product_ids = array_merge( $product_ids, $product->get_children() );
+					$product_ids        = array();
+					$matched_variations = array();
+					$variation_ids      = $product->get_children();
+
+					foreach ( $variation_ids as $variation_id ) {
+
+						$match = true;
+
+						if ( ! empty( $this->attribute_taxonomies ) ) {
+							foreach ( $this->attribute_taxonomies as $taxn ) {
+
+								$attr_slug = 'pa_' . $taxn->attribute_name;
+
+								// Skip if no filter for this attribute
+								if ( empty( $atts[ $attr_slug ] ) || 'any' === $atts[ $attr_slug ] ) {
+									continue;
+								}
+
+								// Get variation attribute (stored in postmeta)
+								$variation_value = get_post_meta(
+									$variation_id,
+									'attribute_' . $attr_slug,
+									true
+								);
+
+								// Compare with the selected filter
+								if ( $variation_value !== $atts[ $attr_slug ] ) {
+									$match = false;
+									break;
+								}
+							}
+						}
+
+						if ( $match ) {
+							$matched_variations[] = $variation_id;
+						}
+
+					}
+
+					$product_ids = array_merge( $product_ids, $matched_variations );
 				}
+
 				// Changing prices
 				foreach ( $product_ids as $_product_id ) {
 					switch ( $atts['price_types'] ) {
+
 						case 'both':
 							$this->change_price( $_product_id, $product_id, 'price',         0, 0 );
 							$this->change_price( $_product_id, $product_id, 'sale_price',    0, 0 );
 							$this->change_price( $_product_id, $product_id, 'regular_price', 0, 0 );
 							break;
+
 						case 'sale_prices':
 							$regular_price = get_post_meta( $_product_id, '_' . 'regular_price', true );
 							if ( get_post_meta( $_product_id, '_' . 'price', true ) === get_post_meta( $_product_id, '_' . 'sale_price', true ) ) {
@@ -195,6 +250,7 @@ class Alg_WC_Bulk_Price_Converter_Core {
 							}
 							$this->change_price( $_product_id, $product_id, 'sale_price', 0, $regular_price );
 							break;
+
 						case 'regular_prices':
 							$sale_price = get_post_meta( $_product_id, '_' . 'sale_price', true );
 							$price      = get_post_meta( $_product_id, '_' . 'price', true );
@@ -203,12 +259,18 @@ class Alg_WC_Bulk_Price_Converter_Core {
 							}
 							$this->change_price( $_product_id, $product_id, 'regular_price', $sale_price, 0 );
 							break;
+
 					}
 				}
+
 			}
+
 			$offset += $block_size;
+
 		}
+
 		return $this->result;
+
 	}
 
 }
