@@ -2,8 +2,8 @@
 Contributors: wpcodefactory, anbinder, karzin, omardabbas, kousikmukherjeeli
 Tags: woocommerce, bulk, price, converter, bulk pricing
 Requires at least: 4.4
-Tested up to: 6.8
-Stable tag: 2.0.2
+Tested up to: 6.9
+Stable tag: 2.0.3
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -132,6 +132,14 @@ Then activate the plugin through the "Plugins" menu in WordPress.
 Finally, you can start using the plugin at "WPFactory > Bulk Price Converter".
 
 == Changelog ==
+
+= 2.0.3 - 22/04/2025 =
+* Feature - Tool - General Options - "Percentage all product prices by" option added.
+* Dev - WPFactory Cross-Selling - Library updated (to v1.1.0).
+* Dev - WPFactory Admin Menu - Library updated (to v1.1.0).
+* Dev - WPFactory Key Manager - Library updated (to v1.0.8).
+* WC tested up to: 10.7.
+* Tested up to: 6.9.
 
 = 2.0.2 - 02/12/2025 =
 * Fix - Product filter now correctly updates prices for products with the selected attribute.

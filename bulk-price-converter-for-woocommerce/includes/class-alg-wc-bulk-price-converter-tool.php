@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Tool Class
  *
- * @version 2.0.0
+ * @version 2.0.3
  * @since   1.4.0
  *
  * @author  WPFactory
@@ -114,7 +114,8 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * create_bulk_price_converter_tool.
 	 *
-	 * @version 1.5.0
+	 * @version 2.0.3
+	 *
 	 * @todo    [dev] (maybe) allow "Multiply all product prices by" to be zero
 	 * @todo    [dev] rewrite (`get_tool_options()`)
 	 * @todo    [dev] (maybe) empty (default) values in "Multiply" and "Add"
@@ -151,6 +152,10 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 				$this->atts['direct_price'] . '">',
 		);
 		$data_table[] = array(
+			__( '<strong>Percentage</strong> all product prices by', 'bulk-price-converter-for-woocommerce' ),
+			'<input style="min-width: 200px;" class="" type="number" step="' . $step . '" name="alg_wc_bpc_percentage_prices_by" id="alg_wc_bpc_percentage_prices_by" value="' . $this->atts['percentage_prices_by'] . '">',
+		);
+		$data_table[] = array(
 			__( '<strong>Multiply</strong> all product prices by', 'bulk-price-converter-for-woocommerce' ),
 			'<input style="min-width: 200px;" class="" type="number" step="' . $step . '" min="' . $step .
 				'" name="alg_wc_bpc_multiply_prices_by" id="alg_wc_bpc_multiply_prices_by" value="' . $this->atts['multiply_prices_by'] . '">',
@@ -170,7 +175,6 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			'<input style="min-width: 200px;" class="" type="number" step="' . $step . '" name="alg_wc_bpc_minus_to_price" id="alg_wc_bpc_minus_to_price" value="' .
 				$this->atts['minus_to_price'] . '" ' . apply_filters( 'alg_wc_bpc_settings', 'disabled' ) . '>',
 		);
-
 		$data_table[] = array(
 			__( 'Price <strong>type</strong> to modify', 'bulk-price-converter-for-woocommerce' ),
 			'<select style="min-width: 200px;" name="alg_wc_bpc_price_types">' .
@@ -201,19 +205,22 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 				$this->get_terms_options( 'product_tag', $this->atts['product_tags'] ) .
 			'</select>'
 		);
-		if(isset($this->attribute_taxonomies) && !empty($this->attribute_taxonomies)){
-			foreach($this->attribute_taxonomies as $taxn){
-				$attr_slug = 'pa_'.$taxn->attribute_name;
-				$post_slug = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name;
+		if ( ! empty( $this->attribute_taxonomies ) ) {
+			foreach ( $this->attribute_taxonomies as $taxn ) {
+				$attr_slug    = 'pa_'.$taxn->attribute_name;
+				$post_slug    = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name;
 				$data_table[] = array(
-					__( 'Products in <strong>'.$taxn->attribute_label.'</strong> attribute', 'bulk-price-converter-for-woocommerce' ),
-					'<select style="min-width: 200px;" name="'.$post_slug.'" ' . apply_filters( 'alg_wc_bpc_settings', 'disabled' ) . '>' .
-						$this->get_terms_options( $attr_slug, $this->atts[$attr_slug] ) .
+					sprintf(
+						/* translators: %s: attribute label. */
+						__( 'Products in %s attribute', 'bulk-price-converter-for-woocommerce' ),
+						'<strong>' . $taxn->attribute_label . '</strong>'
+					),
+					'<select style="min-width: 200px;" name="' . $post_slug . '" ' . apply_filters( 'alg_wc_bpc_settings', 'disabled' ) . '>' .
+						$this->get_terms_options( $attr_slug, $this->atts[ $attr_slug ] ) .
 					'</select>'
 				);
 			}
 		}
-
 		$html .= $this->get_table_html( $data_table,
 			array( 'table_class' => 'widefat striped', 'table_heading_type' => 'vertical', 'columns_styles' => array( 'width: 200px;' ) ) );
 		// Final Price Correction
@@ -289,33 +296,59 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * get_atts.
 	 *
-	 * @version 1.6.3
+	 * @version 2.0.3
 	 * @since   1.4.0
 	 */
 	function get_atts() {
 		$return = array(
-			'direct_price'              => isset( $_POST['alg_wc_bpc_direct_price'] )            ? sanitize_text_field( $_POST['alg_wc_bpc_direct_price'] )   : '',
-			'multiply_prices_by'        => isset( $_POST['alg_wc_bpc_multiply_prices_by'] )      ? floatval( $_POST['alg_wc_bpc_multiply_prices_by'] )        : 1,
-			'divide_prices_by'        	=> isset( $_POST['alg_wc_bpc_divide_prices_by'] )      	 ? floatval( $_POST['alg_wc_bpc_divide_prices_by'] )          : 1,
-			'add_to_price'              => isset( $_POST['alg_wc_bpc_add_to_price'] )            ? floatval( $_POST['alg_wc_bpc_add_to_price'] )              : 0,
-			'minus_to_price'            => isset( $_POST['alg_wc_bpc_minus_to_price'] )          ? floatval( $_POST['alg_wc_bpc_minus_to_price'] )            : 0,
-			'product_cats'              => isset( $_POST['alg_wc_bpc_product_cats'] )            ? sanitize_text_field( $_POST['alg_wc_bpc_product_cats'] )   : 'any',
-			'product_tags'              => isset( $_POST['alg_wc_bpc_product_tags'] )            ? sanitize_text_field( $_POST['alg_wc_bpc_product_tags'] )   : 'any',
-			'price_types'               => isset( $_POST['alg_wc_bpc_price_types'] )             ? sanitize_text_field( $_POST['alg_wc_bpc_price_types'] )    : 'both',
-			'round_function'            => isset( $_POST['alg_wc_bpc_round_function'] )          ? sanitize_text_field( $_POST['alg_wc_bpc_round_function'] ) : 'none',
-			'round_coef'                => isset( $_POST['alg_wc_bpc_round_coef'] )              ? floatval( $_POST['alg_wc_bpc_round_coef'] )                : 0.05,
-			'pretty_prices_threshold'   => isset( $_POST['alg_wc_bpc_pretty_prices_threshold'] ) ? floatval( $_POST['alg_wc_bpc_pretty_prices_threshold'] )   : 0,
-			'is_preview'                => isset( $_POST['alg_wc_bpc_preview_prices'] ),
-			'is_change'                 => isset( $_POST['alg_wc_bpc_change_prices'] ),
+			'direct_price'            => isset( $_POST['alg_wc_bpc_direct_price'] ) ?
+				sanitize_text_field( $_POST['alg_wc_bpc_direct_price'] ) :
+				'',
+			'percentage_prices_by'    => isset( $_POST['alg_wc_bpc_percentage_prices_by'] ) ?
+				floatval( $_POST['alg_wc_bpc_percentage_prices_by'] ) :
+				0,
+			'multiply_prices_by'      => isset( $_POST['alg_wc_bpc_multiply_prices_by'] ) ?
+				floatval( $_POST['alg_wc_bpc_multiply_prices_by'] ) :
+				1,
+			'divide_prices_by'        => isset( $_POST['alg_wc_bpc_divide_prices_by'] ) ?
+				floatval( $_POST['alg_wc_bpc_divide_prices_by'] ) :
+				1,
+			'add_to_price'            => isset( $_POST['alg_wc_bpc_add_to_price'] ) ?
+				floatval( $_POST['alg_wc_bpc_add_to_price'] ) :
+				0,
+			'minus_to_price'          => isset( $_POST['alg_wc_bpc_minus_to_price'] ) ?
+				floatval( $_POST['alg_wc_bpc_minus_to_price'] ) :
+				0,
+			'product_cats'            => isset( $_POST['alg_wc_bpc_product_cats'] ) ?
+				sanitize_text_field( $_POST['alg_wc_bpc_product_cats'] ) :
+				'any',
+			'product_tags'            => isset( $_POST['alg_wc_bpc_product_tags'] ) ?
+				sanitize_text_field( $_POST['alg_wc_bpc_product_tags'] ) :
+				'any',
+			'price_types'             => isset( $_POST['alg_wc_bpc_price_types'] ) ?
+				sanitize_text_field( $_POST['alg_wc_bpc_price_types'] ) :
+				'both',
+			'round_function'          => isset( $_POST['alg_wc_bpc_round_function'] ) ?
+				sanitize_text_field( $_POST['alg_wc_bpc_round_function'] ) :
+				'none',
+			'round_coef'              => isset( $_POST['alg_wc_bpc_round_coef'] ) ?
+				floatval( $_POST['alg_wc_bpc_round_coef'] ) :
+				0.05,
+			'pretty_prices_threshold' => isset( $_POST['alg_wc_bpc_pretty_prices_threshold'] ) ?
+				floatval( $_POST['alg_wc_bpc_pretty_prices_threshold'] ) :
+				0,
+			'is_preview'              => isset( $_POST['alg_wc_bpc_preview_prices'] ),
+			'is_change'               => isset( $_POST['alg_wc_bpc_change_prices'] ),
 		);
 
-		if(isset($this->attribute_taxonomies) && !empty($this->attribute_taxonomies)){
-			foreach($this->attribute_taxonomies as $taxn){
-				$attr_slug = 'pa_'.$taxn->attribute_name;
-				$post_slug = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name;
-				$return[$attr_slug] = isset( $_POST[$post_slug] )   ? sanitize_text_field( $_POST[$post_slug] )   : 'any';
+		if ( ! empty( $this->attribute_taxonomies ) ) {
+			foreach ( $this->attribute_taxonomies as $taxn ) {
+				$attr_slug            = 'pa_' . $taxn->attribute_name;
+				$post_slug            = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name;
+				$return[ $attr_slug ] = isset( $_POST[ $post_slug ] ) ? sanitize_text_field( $_POST[ $post_slug ] ) : 'any';
 			}
 		}
+
 		return $return;
 	}
 

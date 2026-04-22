@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Core Class
  *
- * @version 2.0.2
+ * @version 2.0.3
  * @since   1.0.0
  *
  * @author  WPFactory
@@ -41,7 +41,7 @@ class Alg_WC_Bulk_Price_Converter_Core {
 	/**
 	 * change_price.
 	 *
-	 * @version 1.5.0
+	 * @version 2.0.3
 	 */
 	function change_price( $product_id, $parent_product_id, $price_type, $min_price = 0, $max_price = 0 ) {
 		// Price calculation
@@ -52,6 +52,10 @@ class Alg_WC_Bulk_Price_Converter_Core {
 			$modified_price = $this->atts['direct_price'];
 		}
 		if ( '' !== $modified_price ) {
+			// Percentage
+			if ( '' !== $this->atts['percentage_prices_by'] ) {
+				$modified_price = ( $modified_price * $this->atts['percentage_prices_by'] / 100 ) + $modified_price;
+			}
 			// Multiplication
 			if ( '' !== $this->atts['multiply_prices_by'] ) {
 				$modified_price = $modified_price * $this->atts['multiply_prices_by'];
