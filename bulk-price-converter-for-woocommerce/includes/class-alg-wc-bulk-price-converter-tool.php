@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Tool Class
  *
- * @version 2.0.3
+ * @version 2.0.5
  * @since   1.4.0
  *
  * @author  WPFactory
@@ -38,7 +38,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * Constructor.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.5
 	 * @since   1.4.0
 	 */
 	function __construct() {
@@ -46,28 +46,37 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			add_action( 'admin_init', array( $this, 'convert_prices' ),                PHP_INT_MAX );
 			add_action( 'admin_menu', array( $this, 'add_bulk_price_converter_tool' ), PHP_INT_MAX );
 		}
-		$this->attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
 	}
 
-	function alg_wc_get_attribute_taxonomies(){
-		global $wpdb;
-		$raw_attribute_taxonomies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}woocommerce_attribute_taxonomies WHERE attribute_name != '' ORDER BY attribute_name ASC;" );
-		return $raw_attribute_taxonomies;
+	/**
+	 * alg_wc_get_attribute_taxonomies.
+	 *
+	 * @version 2.0.5
+	 * @since   2.0.5
+	 */
+	function alg_wc_get_attribute_taxonomies() {
+		if ( ! isset( $this->attribute_taxonomies ) ) {
+			$this->attribute_taxonomies = ( function_exists( 'wc_get_attribute_taxonomies' ) ? wc_get_attribute_taxonomies() : array() );
+		}
+		return $this->attribute_taxonomies;
 	}
 
 	/**
 	 * convert_prices.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.5
 	 * @since   1.4.0
 	 */
 	function convert_prices() {
-		$this->atts   = $this->get_atts();
 		$this->result = array();
-		if ( ( $this->atts['is_change'] || $this->atts['is_preview'] ) && $this->atts['multiply_prices_by'] > 0 ) {
-			if ( ! isset( $_POST['alg_wc_bpc_nonce'] ) || ! wp_verify_nonce( $_POST['alg_wc_bpc_nonce'], 'alg_wc_bpc_action' ) || ! current_user_can( 'manage_woocommerce' ) ) {
-				wp_die( __( 'Wrong user role or nonce did not verify.', 'bulk-price-converter-for-woocommerce' ) );
+		// Verify nonce and user role when a price change is submitted.
+		if ( isset( $_POST['alg_wc_bpc_change_prices'] ) || isset( $_POST['alg_wc_bpc_preview_prices'] ) ) {
+			if ( ! isset( $_POST['alg_wc_bpc_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['alg_wc_bpc_nonce'] ) ), 'alg_wc_bpc_action' ) || ! current_user_can( 'manage_woocommerce' ) ) {
+				wp_die( esc_html__( 'Wrong user role or nonce did not verify.', 'bulk-price-converter-for-woocommerce' ) );
 			}
+		}
+		$this->atts = $this->get_atts();
+		if ( ( $this->atts['is_change'] || $this->atts['is_preview'] ) && $this->atts['multiply_prices_by'] > 0 ) {
 			$this->result = alg_wc_bulk_price_converter()->core->change_all_products_prices( $this->atts );
 			if ( ! $this->atts['is_preview'] ) {
 				add_action( 'admin_notices', array( $this, 'add_admin_notice' ) );
@@ -81,7 +90,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * add_admin_notice.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.5
 	 * @since   1.4.0
 	 */
 	function add_admin_notice() {
@@ -92,7 +101,11 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			$message = __( 'No products.', 'bulk-price-converter-for-woocommerce' );
 			$class   = 'warning';
 		}
-		echo '<div class="notice notice-' . $class . '"><p><strong>' . $message . '</strong></p></div>';
+		printf(
+			'<div class="notice notice-%1$s"><p><strong>%2$s</strong></p></div>',
+			esc_attr( $class ),
+			esc_html( $message )
+		);
 	}
 
 	/**
@@ -114,7 +127,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * create_bulk_price_converter_tool.
 	 *
-	 * @version 2.0.3
+	 * @version 2.0.5
 	 *
 	 * @todo    [dev] (maybe) allow "Multiply all product prices by" to be zero
 	 * @todo    [dev] rewrite (`get_tool_options()`)
@@ -139,7 +152,9 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 		$html .= '<form method="post" action="">';
 		// General Options
 		$html .= '<h2>' . __( 'General Options', 'bulk-price-converter-for-woocommerce' ) . '</h2>' . apply_filters( 'alg_wc_bpc_settings',
-			' <p><em>' . sprintf( __( 'You will need %s plugin to use Divide and Subtract options in this section.', 'bulk-price-converter-for-woocommerce' ),
+			' <p><em>' . sprintf(
+				/* translators: %s: link to the Pro version. */
+				__( 'You will need %s plugin to use Divide and Subtract options in this section.', 'bulk-price-converter-for-woocommerce' ),
 				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Converter Pro</a>' ) . '</em></p>' );
 
 		$html .= '<h2>' . __( 'General Options', 'bulk-price-converter-for-woocommerce' ) . '</h2>';
@@ -190,7 +205,9 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			array( 'table_class' => 'widefat striped', 'table_heading_type' => 'vertical', 'columns_styles' => array( 'width: 200px;' ) ) );
 		// Products
 		$html .= '<h2>' . __( 'Products', 'bulk-price-converter-for-woocommerce' ) . '</h2>' . apply_filters( 'alg_wc_bpc_settings',
-			' <p><em>' . sprintf( __( 'Except for Category, you will need %s plugin to change values in this section.', 'bulk-price-converter-for-woocommerce' ),
+			' <p><em>' . sprintf(
+				/* translators: %s: link to the Pro version. */
+				__( 'Except for Category, you will need %s plugin to change values in this section.', 'bulk-price-converter-for-woocommerce' ),
 				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Converter Pro</a>' ) . '</em></p>' );
 		$data_table = array();
 		$data_table[] = array(
@@ -205,9 +222,10 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 				$this->get_terms_options( 'product_tag', $this->atts['product_tags'] ) .
 			'</select>'
 		);
-		if ( ! empty( $this->attribute_taxonomies ) ) {
-			foreach ( $this->attribute_taxonomies as $taxn ) {
-				$attr_slug    = 'pa_'.$taxn->attribute_name;
+		$attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
+		if ( ! empty( $attribute_taxonomies ) ) {
+			foreach ( $attribute_taxonomies as $taxn ) {
+				$attr_slug    = 'pa_' . $taxn->attribute_name;
 				$post_slug    = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name;
 				$data_table[] = array(
 					sprintf(
@@ -225,11 +243,13 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			array( 'table_class' => 'widefat striped', 'table_heading_type' => 'vertical', 'columns_styles' => array( 'width: 200px;' ) ) );
 		// Final Price Correction
 		$html .= '<h2>' . __( 'Final Price Correction', 'bulk-price-converter-for-woocommerce' ) . '</h2>' . apply_filters( 'alg_wc_bpc_settings',
-			' <p><em>' . sprintf( __( 'You will need %s plugin to change values in this section.', 'bulk-price-converter-for-woocommerce' ),
+			' <p><em>' . sprintf(
+				/* translators: %s: link to the Pro version. */
+				__( 'You will need %s plugin to change values in this section.', 'bulk-price-converter-for-woocommerce' ),
 				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Converter Pro</a>' ) . '</em></p>' );
 		$data_table = array();
 		$data_table[] = array(
-			__( '<strong>Rounding function</strong>', 'bulk-price-converter-for-woocommerce' ),
+				'<strong>' . __( 'Rounding function', 'bulk-price-converter-for-woocommerce' ) . '</strong>',
 			'<select style="min-width: 200px;" name="alg_wc_bpc_round_function" ' . apply_filters( 'alg_wc_bpc_settings', 'disabled' ) . '>' .
 				'<option value="none"' .  selected( 'none',  $this->atts['round_function'], false ) . '>' .
 					__( 'None', 'bulk-price-converter-for-woocommerce' )  . '</option>' .
@@ -290,62 +310,99 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			}
 		}
 		$html .= '</div>';
-		echo $html;
+		// Allow form elements, inline styles and the confirmation dialog used by the tool form.
+		$allowed_html            = wp_kses_allowed_html( 'post' );
+		$allowed_html['form']    = array(
+			'action' => true,
+			'method' => true,
+		);
+		$allowed_html['input']   = array(
+			'type'    => true,
+			'name'    => true,
+			'id'      => true,
+			'value'   => true,
+			'class'   => true,
+			'style'   => true,
+			'min'     => true,
+			'step'    => true,
+			'onclick' => true,
+		);
+		$allowed_html['select']  = array(
+			'name'     => true,
+			'id'       => true,
+			'class'    => true,
+			'style'    => true,
+			'disabled' => true,
+		);
+		$allowed_html['option']  = array(
+			'value'    => true,
+			'selected' => true,
+		);
+		echo wp_kses( $html, $allowed_html );
 	}
 
 	/**
 	 * get_atts.
 	 *
-	 * @version 2.0.3
+	 * @version 2.0.5
 	 * @since   1.4.0
 	 */
 	function get_atts() {
+		// Verify nonce when there is any posted data.
+		$post = array();
+		if ( ! empty( $_POST ) ) {
+			$nonce = isset( $_POST['alg_wc_bpc_nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['alg_wc_bpc_nonce'] ) ) : '';
+			if ( wp_verify_nonce( $nonce, 'alg_wc_bpc_action' ) ) {
+				$post = $_POST;
+			}
+		}
 		$return = array(
-			'direct_price'            => isset( $_POST['alg_wc_bpc_direct_price'] ) ?
-				sanitize_text_field( $_POST['alg_wc_bpc_direct_price'] ) :
+			'direct_price'            => isset( $post['alg_wc_bpc_direct_price'] ) ?
+				sanitize_text_field( wp_unslash( $post['alg_wc_bpc_direct_price'] ) ) :
 				'',
-			'percentage_prices_by'    => isset( $_POST['alg_wc_bpc_percentage_prices_by'] ) ?
-				floatval( $_POST['alg_wc_bpc_percentage_prices_by'] ) :
+			'percentage_prices_by'    => isset( $post['alg_wc_bpc_percentage_prices_by'] ) ?
+				floatval( wp_unslash( $post['alg_wc_bpc_percentage_prices_by'] ) ) :
 				0,
-			'multiply_prices_by'      => isset( $_POST['alg_wc_bpc_multiply_prices_by'] ) ?
-				floatval( $_POST['alg_wc_bpc_multiply_prices_by'] ) :
+			'multiply_prices_by'      => isset( $post['alg_wc_bpc_multiply_prices_by'] ) ?
+				floatval( wp_unslash( $post['alg_wc_bpc_multiply_prices_by'] ) ) :
 				1,
-			'divide_prices_by'        => isset( $_POST['alg_wc_bpc_divide_prices_by'] ) ?
-				floatval( $_POST['alg_wc_bpc_divide_prices_by'] ) :
+			'divide_prices_by'        => isset( $post['alg_wc_bpc_divide_prices_by'] ) ?
+				floatval( wp_unslash( $post['alg_wc_bpc_divide_prices_by'] ) ) :
 				1,
-			'add_to_price'            => isset( $_POST['alg_wc_bpc_add_to_price'] ) ?
-				floatval( $_POST['alg_wc_bpc_add_to_price'] ) :
+			'add_to_price'            => isset( $post['alg_wc_bpc_add_to_price'] ) ?
+				floatval( wp_unslash( $post['alg_wc_bpc_add_to_price'] ) ) :
 				0,
-			'minus_to_price'          => isset( $_POST['alg_wc_bpc_minus_to_price'] ) ?
-				floatval( $_POST['alg_wc_bpc_minus_to_price'] ) :
+			'minus_to_price'          => isset( $post['alg_wc_bpc_minus_to_price'] ) ?
+				floatval( wp_unslash( $post['alg_wc_bpc_minus_to_price'] ) ) :
 				0,
-			'product_cats'            => isset( $_POST['alg_wc_bpc_product_cats'] ) ?
-				sanitize_text_field( $_POST['alg_wc_bpc_product_cats'] ) :
+			'product_cats'            => isset( $post['alg_wc_bpc_product_cats'] ) ?
+				sanitize_text_field( wp_unslash( $post['alg_wc_bpc_product_cats'] ) ) :
 				'any',
-			'product_tags'            => isset( $_POST['alg_wc_bpc_product_tags'] ) ?
-				sanitize_text_field( $_POST['alg_wc_bpc_product_tags'] ) :
+			'product_tags'            => isset( $post['alg_wc_bpc_product_tags'] ) ?
+				sanitize_text_field( wp_unslash( $post['alg_wc_bpc_product_tags'] ) ) :
 				'any',
-			'price_types'             => isset( $_POST['alg_wc_bpc_price_types'] ) ?
-				sanitize_text_field( $_POST['alg_wc_bpc_price_types'] ) :
+			'price_types'             => isset( $post['alg_wc_bpc_price_types'] ) ?
+				sanitize_text_field( wp_unslash( $post['alg_wc_bpc_price_types'] ) ) :
 				'both',
-			'round_function'          => isset( $_POST['alg_wc_bpc_round_function'] ) ?
-				sanitize_text_field( $_POST['alg_wc_bpc_round_function'] ) :
+			'round_function'          => isset( $post['alg_wc_bpc_round_function'] ) ?
+				sanitize_text_field( wp_unslash( $post['alg_wc_bpc_round_function'] ) ) :
 				'none',
-			'round_coef'              => isset( $_POST['alg_wc_bpc_round_coef'] ) ?
-				floatval( $_POST['alg_wc_bpc_round_coef'] ) :
+			'round_coef'              => isset( $post['alg_wc_bpc_round_coef'] ) ?
+				floatval( wp_unslash( $post['alg_wc_bpc_round_coef'] ) ) :
 				0.05,
-			'pretty_prices_threshold' => isset( $_POST['alg_wc_bpc_pretty_prices_threshold'] ) ?
-				floatval( $_POST['alg_wc_bpc_pretty_prices_threshold'] ) :
+			'pretty_prices_threshold' => isset( $post['alg_wc_bpc_pretty_prices_threshold'] ) ?
+				floatval( wp_unslash( $post['alg_wc_bpc_pretty_prices_threshold'] ) ) :
 				0,
-			'is_preview'              => isset( $_POST['alg_wc_bpc_preview_prices'] ),
-			'is_change'               => isset( $_POST['alg_wc_bpc_change_prices'] ),
+			'is_preview'              => isset( $post['alg_wc_bpc_preview_prices'] ),
+			'is_change'               => isset( $post['alg_wc_bpc_change_prices'] ),
 		);
 
-		if ( ! empty( $this->attribute_taxonomies ) ) {
-			foreach ( $this->attribute_taxonomies as $taxn ) {
+		$attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
+		if ( ! empty( $attribute_taxonomies ) ) {
+			foreach ( $attribute_taxonomies as $taxn ) {
 				$attr_slug            = 'pa_' . $taxn->attribute_name;
 				$post_slug            = 'alg_wc_bpc_product_attribute_pa_' . $taxn->attribute_name;
-				$return[ $attr_slug ] = isset( $_POST[ $post_slug ] ) ? sanitize_text_field( $_POST[ $post_slug ] ) : 'any';
+				$return[ $attr_slug ] = isset( $post[ $post_slug ] ) ? sanitize_text_field( wp_unslash( $post[ $post_slug ] ) ) : 'any';
 			}
 		}
 
@@ -355,16 +412,20 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * get_terms_options.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.5
 	 * @since   1.4.0
 	 */
 	function get_terms_options( $taxonomy, $terms ) {
-		$terms_html          = '';
-		$terms_html         .= '<option value="any"'  . selected( 'any', $terms, false )  . '>' . __( 'Any', 'bulk-price-converter-for-woocommerce' ) . '</option>';
-		global $wp_version;
-		$product_terms       = ( version_compare( $wp_version, '4.5.0', '<' ) ?
-			get_terms( $taxonomy, array( 'orderby' => 'name', 'hide_empty' => 0 ) ) : get_terms( array( 'taxonomy' => $taxonomy, 'orderby' => 'name', 'hide_empty' => 0 ) ) );
-		if ( ! empty( $product_terms ) && ! is_wp_error( $product_terms ) ){
+		$terms_html    = '';
+		$terms_html   .= '<option value="any"' . selected( 'any', $terms, false ) . '>' . __( 'Any', 'bulk-price-converter-for-woocommerce' ) . '</option>';
+		$product_terms = get_terms(
+			array(
+				'taxonomy'   => $taxonomy,
+				'orderby'    => 'name',
+				'hide_empty' => false,
+			)
+		);
+		if ( ! empty( $product_terms ) && ! is_wp_error( $product_terms ) ) {
 			foreach ( $product_terms as $product_term ) {
 				$terms_html .= '<option value="' . $product_term->slug . '"' . selected( $product_term->slug, $terms, false ) . '>' . $product_term->name . '</option>';
 			}
@@ -376,13 +437,13 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * tip.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.5
 	 * @since   1.4.0
 	 * @todo    [dev] (maybe) make it nicer
 	 */
 	function tip( $message ) {
 		return '<span style="cursor: pointer; float: right; line-height: 15px; width: 15px; border-radius: 50%; background-color: gray; color: white; font-weight: bold; font-size: x-small; text-align: center;" ' .
-			'title="' . esc_html( $message ) . '">&quest;</span>';
+			'title="' . esc_html( $message ) . '">?</span>';
 	}
 
 	/**

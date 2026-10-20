@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Core Class
  *
- * @version 2.0.3
+ * @version 2.0.5
  * @since   1.0.0
  *
  * @author  WPFactory
@@ -20,28 +20,47 @@ class Alg_WC_Bulk_Price_Converter_Core {
 	public $attribute_taxonomies;
 
 	/**
+	 * atts.
+	 *
+	 * @version 2.0.5
+	 * @since   2.0.5
+	 */
+	public $atts;
+
+	/**
+	 * result.
+	 *
+	 * @version 2.0.5
+	 * @since   2.0.5
+	 */
+	public $result;
+
+	/**
 	 * Constructor.
 	 *
-	 * @version 1.4.0
+	 * @version 2.0.5
 	 */
 	function __construct() {
-		$this->attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
 		return true;
 	}
 
 	/**
 	 * alg_wc_get_attribute_taxonomies.
+	 *
+	 * @version 2.0.5
+	 * @since   2.0.5
 	 */
-	function alg_wc_get_attribute_taxonomies(){
-		global $wpdb;
-		$raw_attribute_taxonomies = $wpdb->get_results( "SELECT * FROM {$wpdb->prefix}woocommerce_attribute_taxonomies WHERE attribute_name != '' ORDER BY attribute_name ASC;" );
-		return $raw_attribute_taxonomies;
+	function alg_wc_get_attribute_taxonomies() {
+		if ( ! isset( $this->attribute_taxonomies ) ) {
+			$this->attribute_taxonomies = ( function_exists( 'wc_get_attribute_taxonomies' ) ? wc_get_attribute_taxonomies() : array() );
+		}
+		return $this->attribute_taxonomies;
 	}
 
 	/**
 	 * change_price.
 	 *
-	 * @version 2.0.3
+	 * @version 2.0.5
 	 */
 	function change_price( $product_id, $parent_product_id, $price_type, $min_price = 0, $max_price = 0 ) {
 		// Price calculation
@@ -62,7 +81,7 @@ class Alg_WC_Bulk_Price_Converter_Core {
 			}
 			// Divide
 			if ( '' !== $this->atts['divide_prices_by'] ) {
-				$modified_price = $modified_price / $this->atts['divide_prices_by'];
+				$modified_price = apply_filters( 'alg_wc_bpc_divide_price', $modified_price, $this->atts['divide_prices_by'] );
 			}
 			// Addition
 			if ( '' != $this->atts['add_to_price'] ) {
@@ -70,7 +89,7 @@ class Alg_WC_Bulk_Price_Converter_Core {
 			}
 			// Subtract
 			if ( '' != $this->atts['minus_to_price'] ) {
-				$modified_price = $modified_price - $this->atts['minus_to_price'];
+				$modified_price = apply_filters( 'alg_wc_bpc_subtract_price', $modified_price, $this->atts['minus_to_price'] );
 			}
 			// Rounding
 			if ( 'none' != $this->atts['round_function'] ) {
@@ -128,7 +147,7 @@ class Alg_WC_Bulk_Price_Converter_Core {
 	/**
 	 * change_all_products_prices.
 	 *
-	 * @version 2.0.2
+	 * @version 2.0.5
 	 *
 	 * @todo    (dev) `sale_prices`: remove `( get_post_meta( $_product_id, '_' . 'price', true ) === get_post_meta( $_product_id, '_' . 'sale_price', true ) )` check?
 	 * @todo    (dev) `regular_prices`: remove `( $price !== $sale_price || $atts['multiply_prices_by'] <= 1 )` check?
@@ -139,16 +158,17 @@ class Alg_WC_Bulk_Price_Converter_Core {
 			return;
 		}
 
-		$offset       = 0;
-		$block_size   = get_option( 'alg_wc_bulk_price_converter_block_size', 1024 );
-		$time_limit   = get_option( 'alg_wc_bulk_price_converter_time_limit', -1 );
-		$this->result = array();
-		$this->atts   = $atts;
+		$offset               = 0;
+		$block_size           = get_option( 'alg_wc_bulk_price_converter_block_size', 1024 );
+		$time_limit           = get_option( 'alg_wc_bulk_price_converter_time_limit', -1 );
+		$attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
+		$this->result         = array();
+		$this->atts           = $atts;
 
 		while ( true ) {
 
 			if ( -1 != $time_limit ) {
-				set_time_limit( $time_limit );
+				wc_set_time_limit( $time_limit );
 			}
 
 			$args = array(
@@ -173,8 +193,8 @@ class Alg_WC_Bulk_Price_Converter_Core {
 				$args = apply_filters( 'alg_wc_bpc_product_query', $args, 'product_tag', $atts['product_tags'] );
 			}
 
-			if ( ! empty( $this->attribute_taxonomies ) ) {
-				foreach ( $this->attribute_taxonomies as $taxn ) {
+			if ( ! empty( $attribute_taxonomies ) ) {
+				foreach ( $attribute_taxonomies as $taxn ) {
 					$attr_slug = 'pa_' . $taxn->attribute_name;
 					if ( 'any' != $atts[ $attr_slug ] ) {
 						$args = apply_filters( 'alg_wc_bpc_product_query', $args, $attr_slug, $atts[ $attr_slug ] );
@@ -195,46 +215,13 @@ class Alg_WC_Bulk_Price_Converter_Core {
 				$product     = wc_get_product( $product_id );
 
 				if ( $product->is_type( 'variable' ) ) {
-					$product_ids        = array();
-					$matched_variations = array();
-					$variation_ids      = $product->get_children();
-
-					foreach ( $variation_ids as $variation_id ) {
-
-						$match = true;
-
-						if ( ! empty( $this->attribute_taxonomies ) ) {
-							foreach ( $this->attribute_taxonomies as $taxn ) {
-
-								$attr_slug = 'pa_' . $taxn->attribute_name;
-
-								// Skip if no filter for this attribute
-								if ( empty( $atts[ $attr_slug ] ) || 'any' === $atts[ $attr_slug ] ) {
-									continue;
-								}
-
-								// Get variation attribute (stored in postmeta)
-								$variation_value = get_post_meta(
-									$variation_id,
-									'attribute_' . $attr_slug,
-									true
-								);
-
-								// Compare with the selected filter
-								if ( $variation_value !== $atts[ $attr_slug ] ) {
-									$match = false;
-									break;
-								}
-							}
-						}
-
-						if ( $match ) {
-							$matched_variations[] = $variation_id;
-						}
-
-					}
-
-					$product_ids = array_merge( $product_ids, $matched_variations );
+					$product_ids = apply_filters(
+						'alg_wc_bpc_get_variation_ids',
+						$product->get_children(),
+						$product,
+						$atts,
+						$attribute_taxonomies
+					);
 				}
 
 				// Changing prices
@@ -264,6 +251,17 @@ class Alg_WC_Bulk_Price_Converter_Core {
 							$this->change_price( $_product_id, $product_id, 'regular_price', $sale_price, 0 );
 							break;
 
+					}
+				}
+
+				// Sync the parent variable product so its own prices reflect the updated variations.
+				if ( $product->is_type( 'variable' ) && ! $atts['is_preview'] && ! empty( $product_ids ) ) {
+					if ( method_exists( 'WC_Product_Variable', 'sync' ) ) {
+						if ( ( new ReflectionMethod( 'WC_Product_Variable', 'sync' ) )->isStatic() ) {
+							WC_Product_Variable::sync( $product );
+						} else {
+							$product->sync();
+						}
 					}
 				}
 

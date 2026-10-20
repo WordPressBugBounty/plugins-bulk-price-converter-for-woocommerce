@@ -2,12 +2,12 @@
 Contributors: wpcodefactory, anbinder, karzin, omardabbas, kousikmukherjeeli
 Tags: woocommerce, bulk, price, converter, bulk pricing
 Requires at least: 4.4
-Tested up to: 6.9
-Stable tag: 2.0.3
+Tested up to: 7.1
+Stable tag: 2.0.5
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
-Change ALL your products prices in a single click for any WooCommerce store, set a fixed price, add a fixed amount or multiply prices for all your products with ultimate ease.
+Change all your WooCommerce product prices in one click: set a fixed price, add a fixed amount, or multiply prices with ease.
 
 == Description ==
 
@@ -133,7 +133,19 @@ Finally, you can start using the plugin at "WPFactory > Bulk Price Converter".
 
 == Changelog ==
 
-= 2.0.3 - 22/04/2025 =
+= 2.0.5 - 16/10/2026 =
+* Fix - Variable products - Parent product prices are now synced after updating their variations, so the displayed price range no longer remains stale.
+* Dev - Code security & standards - Output escaping, input sanitization, nonce verification, translators comments, and removal of direct database queries and deprecated get_terms() usage.
+* Dev - Code refactoring.
+* Fix - Declared "atts" and "result" class properties in the core class to prevent "Creation of dynamic property" deprecation warnings on PHP 8.2+.
+* Dev - Minor code cleanup.
+* Tested up to: 7.1.
+* WC tested up to: 11.2.
+
+= 2.0.4 - 23/05/2026 =
+* Tested up to: 7.0.
+
+= 2.0.3 - 22/04/2026 =
 * Feature - Tool - General Options - "Percentage all product prices by" option added.
 * Dev - WPFactory Cross-Selling - Library updated (to v1.1.0).
 * Dev - WPFactory Admin Menu - Library updated (to v1.1.0).

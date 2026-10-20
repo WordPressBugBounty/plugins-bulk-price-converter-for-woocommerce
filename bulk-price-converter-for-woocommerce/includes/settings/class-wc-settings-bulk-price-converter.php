@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Settings
  *
- * @version 2.0.0
+ * @version 2.0.5
  * @since   1.0.0
  *
  * @author  WPFactory
@@ -34,7 +34,7 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 	/**
 	 * output_custom_link.
 	 *
-	 * @version 1.0.0
+	 * @version 2.0.5
 	 * @since   1.0.0
 	 */
 	function output_custom_link( $value ) {
@@ -42,8 +42,8 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 			<th scope="row" class="titledesc">
 				<label for="<?php echo esc_attr( $value['id'] ); ?>"><?php echo esc_html( $value['title'] ); ?></label>
 			</th>
-			<td class="forminp forminp-<?php echo sanitize_title( $value['type'] ) ?>">
-				<?php echo $value['link']; ?>
+			<td class="forminp forminp-<?php echo esc_attr( sanitize_title( $value['type'] ) ); ?>">
+				<?php echo wp_kses_post( $value['link'] ); ?>
 			</td>
 		</tr><?php
 	}
@@ -51,13 +51,14 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 	/**
 	 * get_settings.
 	 *
-	 * @version 1.5.0
+	 * @version 2.0.5
 	 * @since   1.0.0
 	 */
 	function get_settings() {
 		global $current_section;
 		return array_merge(
-			apply_filters( 'woocommerce_get_settings_' . $this->id . '_' . $current_section, array() ),
+			// Matches the filter registered in `Alg_WC_Bulk_Price_Converter_Settings_Section`.
+			apply_filters( 'alg_wc_bulk_price_converter_get_settings_' . $current_section, array() ),
 			array(
 				array(
 					'title'     => __( 'Reset Settings', 'bulk-price-converter-for-woocommerce' ),
