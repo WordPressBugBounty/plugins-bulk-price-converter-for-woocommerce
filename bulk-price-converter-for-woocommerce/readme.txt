@@ -3,7 +3,7 @@ Contributors: wpcodefactory, anbinder, karzin, omardabbas, kousikmukherjeeli
 Tags: woocommerce, bulk, price, converter, bulk pricing
 Requires at least: 4.4
 Tested up to: 7.1
-Stable tag: 2.0.5
+Stable tag: 2.0.6
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -132,6 +132,12 @@ Then activate the plugin through the "Plugins" menu in WordPress.
 Finally, you can start using the plugin at "WPFactory > Bulk Price Converter".
 
 == Changelog ==
+
+= 2.0.6 - 23/11/2026 =
+* WC tested up to: 11.3.
+* Dev - WPFactory Admin Menu - Library updated (to v1.1.4).
+* Dev - WPFactory Cross-Selling - Library updated (to v1.1.7).
+* Dev - WPFactory Key Manager - Library updated (to v1.1.1).
 
 = 2.0.5 - 16/10/2026 =
 * Fix - Variable products - Parent product prices are now synced after updating their variations, so the displayed price range no longer remains stale.
