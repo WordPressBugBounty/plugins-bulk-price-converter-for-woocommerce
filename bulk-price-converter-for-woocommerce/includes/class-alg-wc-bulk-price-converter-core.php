@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Core Class
  *
- * @version 2.0.5
+ * @version 2.1.0
  * @since   1.0.0
  *
  * @author  WPFactory
@@ -147,7 +147,7 @@ class Alg_WC_Bulk_Price_Converter_Core {
 	/**
 	 * change_all_products_prices.
 	 *
-	 * @version 2.0.5
+	 * @version 2.1.0
 	 *
 	 * @todo    (dev) `sale_prices`: remove `( get_post_meta( $_product_id, '_' . 'price', true ) === get_post_meta( $_product_id, '_' . 'sale_price', true ) )` check?
 	 * @todo    (dev) `regular_prices`: remove `( $price !== $sale_price || $atts['multiply_prices_by'] <= 1 )` check?
@@ -164,6 +164,11 @@ class Alg_WC_Bulk_Price_Converter_Core {
 		$attribute_taxonomies = $this->alg_wc_get_attribute_taxonomies();
 		$this->result         = array();
 		$this->atts           = $atts;
+		$undo                 = ( empty( $atts['is_preview'] ) ? alg_wc_bulk_price_converter()->undo : null );
+
+		if ( $undo ) {
+			$undo->begin();
+		}
 
 		while ( true ) {
 
@@ -208,13 +213,16 @@ class Alg_WC_Bulk_Price_Converter_Core {
 				break;
 			}
 
+			// Getting all product IDs (including variations for variable products)
+			$block = array();
 			foreach ( $loop->posts as $product_id ) {
-
-				// Getting all product IDs (including variations for variable products)
+				$product = wc_get_product( $product_id );
+				if ( ! $product ) {
+					continue;
+				}
+				$is_variable = $product->is_type( 'variable' );
 				$product_ids = array( $product_id );
-				$product     = wc_get_product( $product_id );
-
-				if ( $product->is_type( 'variable' ) ) {
+				if ( $is_variable ) {
 					$product_ids = apply_filters(
 						'alg_wc_bpc_get_variation_ids',
 						$product->get_children(),
@@ -223,6 +231,27 @@ class Alg_WC_Bulk_Price_Converter_Core {
 						$attribute_taxonomies
 					);
 				}
+				$block[] = array( $product_id, $is_variable, $product_ids );
+			}
+
+			// Save the current prices of the whole block before any of them changes, so the change can be undone
+			if ( $undo ) {
+				$block_item_ids = array();
+				foreach ( $block as $block_item ) {
+					foreach ( $block_item[2] as $_product_id ) {
+						$block_item_ids[] = (int) $_product_id;
+					}
+				}
+				update_meta_cache( 'post', $block_item_ids );
+				foreach ( $block as $block_item ) {
+					$undo->add( $block_item[0], $block_item[2], $block_item[1] );
+				}
+				$undo->flush();
+			}
+
+			foreach ( $block as $block_item ) {
+
+				list( $product_id, $is_variable, $product_ids ) = $block_item;
 
 				// Changing prices
 				foreach ( $product_ids as $_product_id ) {
@@ -255,14 +284,8 @@ class Alg_WC_Bulk_Price_Converter_Core {
 				}
 
 				// Sync the parent variable product so its own prices reflect the updated variations.
-				if ( $product->is_type( 'variable' ) && ! $atts['is_preview'] && ! empty( $product_ids ) ) {
-					if ( method_exists( 'WC_Product_Variable', 'sync' ) ) {
-						if ( ( new ReflectionMethod( 'WC_Product_Variable', 'sync' ) )->isStatic() ) {
-							WC_Product_Variable::sync( $product );
-						} else {
-							$product->sync();
-						}
-					}
+				if ( $is_variable && ! $atts['is_preview'] && ! empty( $product_ids ) ) {
+					$this->sync_variable_product( wc_get_product( $product_id ) );
 				}
 
 			}
@@ -271,8 +294,33 @@ class Alg_WC_Bulk_Price_Converter_Core {
 
 		}
 
+		if ( $undo ) {
+			$undo->end();
+		}
+
 		return $this->result;
 
+	}
+
+	/**
+	 * sync_variable_product.
+	 *
+	 * Syncs a variable product so its own prices and price range reflect its variations.
+	 *
+	 * @version 2.1.0
+	 * @since   2.1.0
+	 *
+	 * @param   WC_Product|false $product Variable product.
+	 */
+	function sync_variable_product( $product ) {
+		if ( ! $product || ! method_exists( 'WC_Product_Variable', 'sync' ) ) {
+			return;
+		}
+		if ( ( new ReflectionMethod( 'WC_Product_Variable', 'sync' ) )->isStatic() ) {
+			WC_Product_Variable::sync( $product );
+		} else {
+			$product->sync();
+		}
 	}
 
 }

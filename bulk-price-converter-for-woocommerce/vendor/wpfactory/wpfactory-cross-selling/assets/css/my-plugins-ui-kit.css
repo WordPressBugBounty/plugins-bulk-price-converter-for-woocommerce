@@ -1,0 +1,205 @@
+/* WPFactory My Plugins UI kit, built from the design team's ui-kit.css by build/make-ui-kit.py. Do not edit here. */
+.wpf-myplugins{
+  --ak-bg:#F5F1E6;            /* page background (cream) */
+  --ak-surface:#FFFFFF;       /* cards */
+  --ak-surface-2:#FAF7EF;     /* inset areas inside cards */
+  --ak-line:#E6E0CF;          /* borders and dividers */
+  --ak-line-strong:#CFC8B4;   /* input borders */
+  --ak-ink:#171509;           /* main text */
+  --ak-muted:#5E5A4C;         /* secondary text, 6.4:1 on white */
+  --ak-accent:#6BBFFF;        /* primary button fill, ink text on top */
+  --ak-accent-ink:#0B4F86;    /* links and focus */
+  --ak-accent-soft:#EAF5FF;
+  --ak-ok:#1F7A43; --ak-ok-soft:#E7F5EC;
+  --ak-warn:#8A5200; --ak-warn-soft:#FFF4E0; --ak-warn-line:#E8C98A;
+  --ak-bad:#B42318; --ak-bad-soft:#FDECEA;
+  --ak-neutral-soft:#EFEBDF;
+  --ak-r-card:16px; --ak-r-ctl:10px; --ak-r-pill:999px;
+  --ak-s1:4px; --ak-s2:8px; --ak-s3:12px; --ak-s4:16px; --ak-s5:20px; --ak-s6:24px; --ak-s8:32px;
+  --ak-font:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+}
+.wpf-myplugins .ak-a{color:var(--ak-accent-ink);font-weight:600;text-decoration:none}
+.wpf-myplugins .ak-a:hover{text-decoration:underline}
+
+/* Top bar (plugin header) */
+.wpf-myplugins .ak-topbar{display:flex;align-items:center;justify-content:space-between;background:var(--ak-surface);border-bottom:1px solid var(--ak-line);padding:10px 24px;position:sticky;top:0;z-index:5}
+.wpf-myplugins .ak-brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:15px;margin-right:16px}
+.wpf-myplugins .ak-brand-mark{width:32px;height:32px;border-radius:8px;background:var(--ak-ink);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.wpf-myplugins .ak-nav{display:flex;gap:2px;align-items:center}
+.wpf-myplugins .ak-nav a{color:var(--ak-ink);font-weight:500;padding:8px 12px;border-radius:var(--ak-r-pill);display:flex;gap:6px;align-items:center}
+.wpf-myplugins .ak-nav a:hover{background:var(--ak-neutral-soft);text-decoration:none}
+.wpf-myplugins .ak-nav a.on{background:var(--ak-ink);color:#fff}
+.wpf-myplugins .ak-count{font-size:11px;font-weight:700;background:var(--ak-warn-soft);color:var(--ak-warn);border-radius:var(--ak-r-pill);padding:1px 7px}
+.wpf-myplugins .ak-nav a.on .ak-count{background:#fff;color:var(--ak-ink)}
+.wpf-myplugins .ak-top-right{display:flex;gap:8px;align-items:center}
+
+/* Page */
+.wpf-myplugins .ak-page{max-width:1180px;margin:0 auto;padding:var(--ak-s8) var(--ak-s6) 64px}
+.wpf-myplugins .ak-page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--ak-s6);margin-bottom:var(--ak-s6)}
+.wpf-myplugins .ak-eyebrow{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ak-muted)}
+.wpf-myplugins .ak-h1{font-size:32px;line-height:1.15;margin:6px 0 0;font-weight:700;letter-spacing:-.01em}
+.wpf-myplugins .ak-lead{font-size:15px;color:var(--ak-muted);margin:8px 0 0;max-width:760px}
+.wpf-myplugins .ak-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:var(--ak-s6);align-items:start}
+.wpf-myplugins .ak-stack{display:flex;flex-direction:column;gap:var(--ak-s4)}
+
+/* Card */
+.wpf-myplugins .ak-card{background:var(--ak-surface);border:1px solid var(--ak-line);border-radius:var(--ak-r-card);overflow:hidden}
+.wpf-myplugins .ak-card-head{display:flex;justify-content:space-between;align-items:center;gap:var(--ak-s3);padding:var(--ak-s4) var(--ak-s5);border-bottom:1px solid var(--ak-line)}
+.wpf-myplugins .ak-card-title{font-size:16px;font-weight:700;margin:0}
+.wpf-myplugins .ak-card-body{padding:var(--ak-s5)}
+.wpf-myplugins .ak-card-foot{display:flex;justify-content:space-between;align-items:center;gap:var(--ak-s3);padding:var(--ak-s3) var(--ak-s5);border-top:1px solid var(--ak-line);background:var(--ak-surface-2)}
+.wpf-myplugins .ak-card.emphasis{border:2px solid var(--ak-ink)}
+.wpf-myplugins .ak-section-label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ak-muted);padding:var(--ak-s3) var(--ak-s5) 6px;background:var(--ak-surface-2);border-bottom:1px solid var(--ak-line)}
+
+/* Rows (lists inside cards) */
+.wpf-myplugins .ak-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--ak-s4);align-items:center;padding:var(--ak-s3) var(--ak-s5);border-bottom:1px solid var(--ak-line)}
+.wpf-myplugins .ak-row:last-child{border-bottom:0}
+.wpf-myplugins .ak-row-title{font-size:15px;font-weight:600;margin:0}
+.wpf-myplugins .ak-row-meta{font-size:13px;color:var(--ak-muted);margin-top:2px}
+.wpf-myplugins .ak-row-actions{display:flex;gap:var(--ak-s2);align-items:center;justify-content:flex-end}
+.wpf-myplugins .ak-row.selected{background:var(--ak-accent-soft);box-shadow:inset 3px 0 0 var(--ak-accent-ink)}
+
+/* Buttons: 4 kinds only */
+.wpf-myplugins .ak-btn{font:600 14px/1 var(--ak-font);height:40px;padding:0 16px;border-radius:var(--ak-r-pill);border:1px solid transparent;cursor:pointer;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;text-decoration:none}
+.wpf-myplugins .ak-btn:hover{text-decoration:none}
+.wpf-myplugins .ak-btn-primary{background:var(--ak-accent);color:var(--ak-ink)}
+.wpf-myplugins .ak-btn-primary:hover{background:#56B2F7}
+.wpf-myplugins .ak-btn-secondary{background:var(--ak-surface);color:var(--ak-ink);border-color:var(--ak-line-strong)}
+.wpf-myplugins .ak-btn-secondary:hover{background:var(--ak-neutral-soft)}
+.wpf-myplugins .ak-btn-text{background:transparent;color:var(--ak-accent-ink);padding:0 6px}
+.wpf-myplugins .ak-btn-text:hover{text-decoration:underline}
+.wpf-myplugins .ak-btn-danger{background:transparent;color:var(--ak-bad);padding:0 6px}
+.wpf-myplugins .ak-btn-dark{background:var(--ak-ink);color:#fff}
+.wpf-myplugins .ak-btn-sm{height:32px;padding:0 12px;font-size:13px}
+.wpf-myplugins .ak-btn[disabled]{opacity:.45;cursor:not-allowed}
+.wpf-myplugins .ak-btn:focus-visible,.wpf-myplugins .ak-input:focus-visible,.wpf-myplugins .ak-select:focus-visible{outline:3px solid var(--ak-accent);outline-offset:2px}
+
+/* Chips: status only, never clickable, never button-shaped */
+.wpf-myplugins .ak-chip{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 8px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap}
+.wpf-myplugins .ak-chip-neutral{background:var(--ak-neutral-soft);color:var(--ak-ink)}
+.wpf-myplugins .ak-chip-ok{background:var(--ak-ok-soft);color:var(--ak-ok)}
+.wpf-myplugins .ak-chip-warn{background:var(--ak-warn-soft);color:var(--ak-warn)}
+.wpf-myplugins .ak-chip-bad{background:var(--ak-bad-soft);color:var(--ak-bad)}
+.wpf-myplugins .ak-chip-info{background:var(--ak-accent-soft);color:var(--ak-accent-ink)}
+
+/* Inputs */
+.wpf-myplugins .ak-input,.wpf-myplugins .ak-select{height:40px;border:1px solid var(--ak-line-strong);border-radius:var(--ak-r-ctl);background:var(--ak-surface);padding:0 12px;font:14px var(--ak-font);color:var(--ak-ink);min-width:0}
+.wpf-myplugins .ak-input::placeholder{color:#8A8573}
+.wpf-myplugins .ak-input-sm{height:32px;width:72px;text-align:center;font-weight:600}
+.wpf-myplugins .ak-field{display:flex;gap:var(--ak-s2);align-items:center}
+.wpf-myplugins .ak-label{font-size:13px;font-weight:600}
+
+/* Toggle with one visible state label */
+.wpf-myplugins .ak-toggle{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--ak-muted)}
+.wpf-myplugins .ak-switch{width:40px;height:24px;border-radius:var(--ak-r-pill);background:#CFC8B4;position:relative;flex-shrink:0}
+.wpf-myplugins .ak-switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2)}
+.wpf-myplugins .ak-switch.on{background:var(--ak-accent-ink)}
+.wpf-myplugins .ak-switch.on::after{left:19px}
+
+/* Segmented control and tabs */
+.wpf-myplugins .ak-seg{display:inline-flex;background:var(--ak-neutral-soft);border-radius:var(--ak-r-ctl);padding:3px;gap:2px}
+.wpf-myplugins .ak-seg button{font:600 13px var(--ak-font);border:0;background:transparent;color:var(--ak-muted);height:32px;padding:0 12px;border-radius:8px;cursor:pointer}
+.wpf-myplugins .ak-seg button.on{background:var(--ak-surface);color:var(--ak-ink);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.wpf-myplugins .ak-tabs{display:flex;gap:4px;border-bottom:1px solid var(--ak-line);margin-bottom:var(--ak-s5)}
+.wpf-myplugins .ak-tabs a{color:var(--ak-muted);font-weight:600;padding:10px 12px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.wpf-myplugins .ak-tabs a.on{color:var(--ak-ink);border-bottom-color:var(--ak-ink)}
+
+/* Banners: one line of text, at most one action */
+.wpf-myplugins .ak-banner{display:flex;justify-content:space-between;align-items:center;gap:var(--ak-s3);padding:var(--ak-s3) var(--ak-s4);border-radius:var(--ak-r-ctl);border:1px solid;font-size:14px}
+.wpf-myplugins .ak-banner-info{background:var(--ak-accent-soft);border-color:#B9DCF7}
+.wpf-myplugins .ak-banner-warn{background:var(--ak-warn-soft);border-color:var(--ak-warn-line)}
+.wpf-myplugins .ak-banner-ok{background:var(--ak-ok-soft);border-color:#BFE3CC}
+.wpf-myplugins .ak-banner-bad{background:var(--ak-bad-soft);border-color:#F1B8B2}
+
+/* Stat */
+.wpf-myplugins .ak-stat{display:flex;gap:var(--ak-s6);align-items:center;padding:var(--ak-s5);background:var(--ak-accent-soft);border:1px solid #B9DCF7;border-radius:var(--ak-r-card)}
+.wpf-myplugins .ak-stat-num{font-size:36px;font-weight:700;line-height:1}
+.wpf-myplugins .ak-stat-tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ak-s3)}
+.wpf-myplugins .ak-tile{background:var(--ak-surface-2);border:1px solid var(--ak-line);border-radius:var(--ak-r-ctl);padding:var(--ak-s3)}
+.wpf-myplugins .ak-tile .ak-eyebrow{font-size:11px}
+
+/* Disclosure */
+.wpf-myplugins details.ak-disclosure{border-top:1px solid var(--ak-line)}
+.wpf-myplugins details.ak-disclosure summary{cursor:pointer;font-weight:600;padding:var(--ak-s3) var(--ak-s5);list-style:none}
+.wpf-myplugins details.ak-disclosure summary::before{content:"▸";display:inline-block;width:16px;color:var(--ak-muted)}
+
+/* Diff */
+.wpf-myplugins .ak-del{background:var(--ak-bad-soft);color:var(--ak-bad);text-decoration:line-through;border-radius:4px;padding:0 3px}
+.wpf-myplugins .ak-add{background:var(--ak-ok-soft);color:var(--ak-ok);border-radius:4px;padding:0 3px;font-weight:600}
+
+/* Table */
+.wpf-myplugins .ak-table{width:100%;border-collapse:collapse}
+.wpf-myplugins .ak-table th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--ak-muted);text-align:left;padding:10px var(--ak-s5);background:var(--ak-surface-2);border-bottom:1px solid var(--ak-line)}
+.wpf-myplugins .ak-table td{padding:12px var(--ak-s5);border-bottom:1px solid var(--ak-line);vertical-align:top}
+.wpf-myplugins .ak-muted{color:var(--ak-muted)}
+.wpf-myplugins .ak-small{font-size:13px}
+.wpf-myplugins .ak-num{display:inline-flex;width:24px;height:24px;border-radius:50%;background:var(--ak-ink);color:#fff;font-size:12px;font-weight:700;align-items:center;justify-content:center;flex-shrink:0}
+
+
+/* ---- Additions for AI Product Image Generator (additive, safe for the shared kit) ---- */
+/* Brand mark variant and image balance in the top bar */
+.wpf-myplugins .ak-balance{font-size:13px;font-weight:600;color:var(--ak-ink);background:var(--ak-neutral-soft);border-radius:var(--ak-r-pill);padding:8px 12px;white-space:nowrap}
+
+/* Image placeholders and thumbnails */
+.wpf-myplugins .ak-thumb{width:44px;height:44px;border-radius:8px;border:1px solid var(--ak-line);background:var(--ak-surface-2) center/cover no-repeat;flex-shrink:0}
+.wpf-myplugins .ak-shot{position:relative;border-radius:var(--ak-r-ctl);border:1px solid var(--ak-line);background:var(--ak-surface-2) center/contain no-repeat;overflow:hidden}
+.wpf-myplugins .ak-shot-label{position:absolute;top:8px;left:8px;font-size:11px;font-weight:700;background:rgba(255,255,255,.92);color:var(--ak-ink);border-radius:6px;padding:2px 6px}
+
+/* Before / after compare: one frame, one divider, same aspect on both sides */
+.wpf-myplugins .ak-compare{position:relative;aspect-ratio:1/1;border-radius:var(--ak-r-ctl);border:1px solid var(--ak-line);overflow:hidden;background:#fff}
+.wpf-myplugins .ak-compare .ak-side{position:absolute;inset:0;background:center/contain no-repeat}
+.wpf-myplugins .ak-compare .ak-after{clip-path:inset(0 0 0 50%)}
+.wpf-myplugins .ak-compare .ak-handle{position:absolute;top:0;bottom:0;left:50%;width:2px;background:var(--ak-ink);transform:translateX(-1px)}
+.wpf-myplugins .ak-compare .ak-handle::after{content:"";position:absolute;top:50%;left:50%;width:28px;height:28px;margin:-14px 0 0 -14px;border-radius:50%;background:#fff;border:2px solid var(--ak-ink)}
+.wpf-myplugins .ak-compare .ak-tag{position:absolute;bottom:8px;font-size:11px;font-weight:700;background:rgba(255,255,255,.92);border-radius:6px;padding:2px 6px}
+.wpf-myplugins .ak-compare .ak-tag.l{left:8px}.ak-compare .ak-tag.r{right:8px}
+
+/* Steps (wizard): numbers only, done steps use the ok color */
+.wpf-myplugins .ak-steps{display:flex;gap:var(--ak-s2);align-items:center;padding:var(--ak-s4) var(--ak-s5);border-bottom:1px solid var(--ak-line);background:var(--ak-surface-2)}
+.wpf-myplugins .ak-step{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--ak-muted)}
+.wpf-myplugins .ak-step .ak-num{background:var(--ak-neutral-soft);color:var(--ak-muted)}
+.wpf-myplugins .ak-step.on{color:var(--ak-ink)} .ak-step.on .ak-num{background:var(--ak-ink);color:#fff}
+.wpf-myplugins .ak-step.done .ak-num{background:var(--ak-ok-soft);color:var(--ak-ok)}
+.wpf-myplugins .ak-step-line{flex:1;height:1px;background:var(--ak-line);min-width:16px}
+
+/* Choice rows (radio cards). Selected uses .row.selected */
+.wpf-myplugins .ak-choice{display:grid;grid-template-columns:20px minmax(0,1fr);gap:var(--ak-s3);align-items:start;padding:var(--ak-s4) var(--ak-s5);border-bottom:1px solid var(--ak-line);cursor:pointer}
+.wpf-myplugins .ak-choice:last-child{border-bottom:0}
+.wpf-myplugins .ak-choice.selected{background:var(--ak-accent-soft);box-shadow:inset 3px 0 0 var(--ak-accent-ink)}
+.wpf-myplugins .ak-radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--ak-line-strong);background:#fff;margin-top:2px}
+.wpf-myplugins .ak-choice.selected .ak-radio{border:5px solid var(--ak-accent-ink)}
+.wpf-myplugins .ak-check{width:18px;height:18px;border-radius:4px;border:2px solid var(--ak-line-strong);background:#fff;flex-shrink:0;display:inline-block;vertical-align:middle}
+.wpf-myplugins .ak-check.on{background:var(--ak-accent-ink);border-color:var(--ak-accent-ink);box-shadow:inset 0 0 0 2px #fff}
+.wpf-myplugins ul.plain{margin:6px 0 0;padding-left:18px;color:var(--ak-muted);font-size:13px}
+.wpf-myplugins ul.plain li{margin:2px 0}
+
+/* Form grid */
+.wpf-myplugins .ak-form-grid{display:grid;grid-template-columns:200px minmax(0,1fr);gap:var(--ak-s4) var(--ak-s5);align-items:start}
+.wpf-myplugins .ak-form-grid .ak-label{padding-top:10px}
+.wpf-myplugins .ak-help{font-size:13px;color:var(--ak-muted);margin-top:6px}
+.wpf-myplugins .ak-textarea{width:100%;min-height:96px;border:1px solid var(--ak-line-strong);border-radius:var(--ak-r-ctl);padding:10px 12px;font:14px/1.45 var(--ak-font);color:var(--ak-ink);background:var(--ak-surface);resize:vertical}
+.wpf-myplugins .ak-w-full{width:100%}
+.wpf-myplugins .ak-filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--ak-s3)}
+.wpf-myplugins .ak-filters .ak-label{display:block;margin-bottom:6px}
+.wpf-myplugins .ak-range{display:flex;align-items:center;gap:var(--ak-s3);font-size:13px;color:var(--ak-muted)}
+.wpf-myplugins .ak-range .ak-track{flex:1;height:6px;border-radius:3px;background:var(--ak-neutral-soft);position:relative}
+.wpf-myplugins .ak-range .ak-fill{position:absolute;left:0;top:0;bottom:0;border-radius:3px;background:var(--ak-accent-ink)}
+.wpf-myplugins .ak-range .ak-knob{position:absolute;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;border:2px solid var(--ak-accent-ink)}
+.wpf-myplugins code,.wpf-myplugins .ak-code{font:13px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--ak-surface-2);border:1px solid var(--ak-line);border-radius:6px;padding:1px 6px}
+
+/* Bars (style usage) */
+.wpf-myplugins .ak-bar{height:6px;border-radius:3px;background:var(--ak-neutral-soft);margin-top:6px;overflow:hidden}
+.wpf-myplugins .ak-bar span{display:block;height:100%;background:var(--ak-accent-ink)}
+
+/* Packs: rows inside a card, never a grid of buttons */
+.wpf-myplugins .ak-pack-price{font-weight:700;font-size:15px}
+
+/* WordPress meta box (sidebar, 280px). Inherits WP postbox chrome */
+.wpf-myplugins .ak-wp-postbox{width:280px;background:#fff;border:1px solid #c3c4c7;font-size:13px}
+.wpf-myplugins .ak-wp-postbox h2{font-size:14px;margin:0;padding:10px 12px;border-bottom:1px solid #c3c4c7;font-weight:600}
+.wpf-myplugins .ak-mb{padding:12px;display:flex;flex-direction:column;gap:12px}
+.wpf-myplugins .ak-mb .ak-select,.wpf-myplugins .ak-mb .ak-input{height:36px;width:100%}
+.wpf-myplugins .ak-mb-card{border:1px solid var(--ak-line);border-radius:var(--ak-r-ctl);overflow:hidden}
+.wpf-myplugins .ak-mb-card .ak-mb-head{display:flex;justify-content:space-between;align-items:center;padding:8px 10px;font-weight:600}
+.wpf-myplugins .ak-mb-card .ak-mb-actions{display:flex;flex-wrap:wrap;gap:4px 8px;align-items:center;padding:8px 10px;border-top:1px solid var(--ak-line);background:var(--ak-surface-2)}
+.wpf-myplugins .ak-wizard{max-width:760px;margin:0 auto}

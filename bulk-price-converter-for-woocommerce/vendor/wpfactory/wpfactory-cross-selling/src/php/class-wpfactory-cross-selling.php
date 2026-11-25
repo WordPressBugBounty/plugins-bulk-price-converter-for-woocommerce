@@ -32,7 +32,7 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling'
 		 *
 		 * @var string
 		 */
-		protected $version = '1.1.7';
+		protected $version = '1.2.0';
 
 		/**
 		 * Setup args.
@@ -51,15 +51,6 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling'
 		 * @var Products
 		 */
 		public $products;
-
-		/**
-		 * Banners.
-		 *
-		 * @since   1.0.4
-		 *
-		 * @var Banners
-		 */
-		public $banners;
 
 		/**
 		 * Product categories.
@@ -96,22 +87,22 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling'
 				'plugin_file_path'     => '',
 				'recommendations_page' => array(),
 				'recommendations_box'  => array(),
-				'banners'              => array()
 			) );
 
-			// Recommendations page.
+			// Recommendations page. Since 1.2.0 the My Plugins page replaces it; these args are only
+			// used when My Plugins could not boot (see Recommendations_Page).
 			$args['recommendations_page'] = wp_parse_args( $args['recommendations_page'], array(
-				'page_title'      => __( 'WPFactory Recommendations', 'wpfactory-cross-selling' ),
-				'menu_title'      => __( 'Recommendations', 'wpfactory-cross-selling' ),
+				'page_title'      => __( 'My Plugins', 'wpfactory-cross-selling' ),
+				'menu_title'      => __( 'My Plugins', 'wpfactory-cross-selling' ),
 				'menu_capability' => '',
 				'menu_position'   => 2,
 				'action_link'     => array()
 			) );
 
-			// Recommendations page action link.
+			// Plugins screen action link.
 			$args['recommendations_page']['action_link'] = wp_parse_args( $args['recommendations_page']['action_link'], array(
 				'enable' => true,
-				'label'  => __( 'Recommendations', 'wpfactory-cross-selling' ),
+				'label'  => __( 'My Plugins', 'wpfactory-cross-selling' ),
 			) );
 
 			// Recommendations box.
@@ -119,17 +110,6 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling'
 				'enable'             => true,
 				'position'           => array( 'wc_settings_tab' ),
 				'wc_settings_tab_id' => '',
-			) );
-
-			$args['banners'] = wp_parse_args( $args['banners'], array(
-				'enable'                  => true,
-				'get_banner_method'       => 'advanced_ads',
-				'banner_cache_duration'   => HOUR_IN_SECONDS, // `false` to not cache results.
-				'banner_dismiss_duration' => WEEK_IN_SECONDS, // `false` to always display it.
-				'advanced_ads_setup'      => array(
-					'dashboard_banner_group_name' => 'CS - Dashboard',
-					'recommendations_group_name' => 'CS - Recommendations'
-				)
 			) );
 
 			// Library file path.
@@ -168,11 +148,6 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\WPFactory_Cross_Selling'
 			$recommendations_box = new Recommendations_Box();
 			$recommendations_box->set_wpfactory_cross_selling( $this );
 			$recommendations_box->init();
-
-			// Banners.
-			$this->banners = new Banners();
-			$this->banners->set_wpfactory_cross_selling( $this );
-			$this->banners->init();
 
 			// Enqueues admin syles.
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );

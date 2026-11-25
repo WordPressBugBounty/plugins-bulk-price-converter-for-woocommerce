@@ -17,12 +17,12 @@ class Alg_WC_Settings_Bulk_Price_Converter extends WC_Settings_Page {
 	/**
 	 * Constructor.
 	 *
-	 * @version 2.0.0
+	 * @version 2.1.0
 	 * @since   1.0.0
 	 */
 	function __construct() {
 		$this->id    = 'alg_wc_bulk_price_converter';
-		$this->label = __( 'Bulk Price Converter', 'bulk-price-converter-for-woocommerce' );
+		$this->label = __( 'Bulk Price Editor', 'bulk-price-converter-for-woocommerce' );
 		add_action( 'woocommerce_admin_field_bulk_price_converter_custom_link', array( $this, 'output_custom_link' ) );
 		parent::__construct();
 

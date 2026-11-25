@@ -1,9 +1,9 @@
 === Price Update: Bulk Pricing Editor for WooCommerce ===
 Contributors: wpcodefactory, anbinder, karzin, omardabbas, kousikmukherjeeli
-Tags: woocommerce, bulk, price, converter, bulk pricing
+Tags: woocommerce, bulk, price, bulk edit, bulk pricing
 Requires at least: 4.4
 Tested up to: 7.1
-Stable tag: 2.0.6
+Stable tag: 2.1.0
 License: GNU General Public License v3.0
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -132,6 +132,13 @@ Then activate the plugin through the "Plugins" menu in WordPress.
 Finally, you can start using the plugin at "WPFactory > Bulk Price Converter".
 
 == Changelog ==
+
+= 2.1.0 - 25/11/2026 =
+* Feature - Tool - "Undo last change" button: puts back the regular and sale prices from before the last price change, for simple products and variations. The tool keeps the last change only.
+* Feature - Admin - New "My Plugins" page in the WPFactory menu.
+* Tweak - Admin - The menu, tool page and settings tab now use the plugin's current name, "Bulk Price Editor".
+* Dev - WPFactory Cross-Selling - Library updated (to v1.2.0).
+* Dev - readme.txt - Tags updated.
 
 = 2.0.6 - 23/11/2026 =
 * WC tested up to: 11.3.

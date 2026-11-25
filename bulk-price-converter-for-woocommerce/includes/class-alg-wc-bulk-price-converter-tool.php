@@ -2,7 +2,7 @@
 /**
  * Bulk Price Converter - Tool Class
  *
- * @version 2.0.5
+ * @version 2.1.0
  * @since   1.4.0
  *
  * @author  WPFactory
@@ -64,11 +64,12 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * convert_prices.
 	 *
-	 * @version 2.0.5
+	 * @version 2.1.0
 	 * @since   1.4.0
 	 */
 	function convert_prices() {
 		$this->result = array();
+		$this->maybe_undo_last_change();
 		// Verify nonce and user role when a price change is submitted.
 		if ( isset( $_POST['alg_wc_bpc_change_prices'] ) || isset( $_POST['alg_wc_bpc_preview_prices'] ) ) {
 			if ( ! isset( $_POST['alg_wc_bpc_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['alg_wc_bpc_nonce'] ) ), 'alg_wc_bpc_action' ) || ! current_user_can( 'manage_woocommerce' ) ) {
@@ -85,6 +86,138 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 				}
 			}
 		}
+	}
+
+	/**
+	 * maybe_undo_last_change.
+	 *
+	 * Puts back the prices saved before the last change, then reloads the tool page
+	 * so a page refresh does not send the request again.
+	 *
+	 * @version 2.1.0
+	 * @since   2.1.0
+	 */
+	function maybe_undo_last_change() {
+		if ( ! isset( $_POST['alg_wc_bpc_undo'] ) ) {
+			return;
+		}
+		if (
+			! isset( $_POST['alg_wc_bpc_undo_nonce'] ) ||
+			! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['alg_wc_bpc_undo_nonce'] ) ), 'alg_wc_bpc_undo_action' ) ||
+			! current_user_can( 'manage_woocommerce' )
+		) {
+			wp_die( esc_html__( 'Wrong user role or nonce did not verify.', 'bulk-price-converter-for-woocommerce' ) );
+		}
+		$result = alg_wc_bulk_price_converter()->undo->restore();
+		set_transient( 'alg_wc_bpc_undo_notice_' . get_current_user_id(), ( $result ? $result : 'none' ), 5 * MINUTE_IN_SECONDS );
+		wp_safe_redirect( admin_url( 'admin.php?page=alg-wc-bulk-price-converter-tool' ) );
+		exit;
+	}
+
+	/**
+	 * get_products_count_text.
+	 *
+	 * @version 2.1.0
+	 * @since   2.1.0
+	 *
+	 * @param   int $products   Number of products.
+	 * @param   int $variations Number of variations.
+	 * @return  string E.g. "3 products" or "3 products with 12 variations".
+	 */
+	function get_products_count_text( $products, $variations ) {
+		$products   = (int) $products;
+		$variations = (int) $variations;
+		$text       = sprintf(
+			/* translators: %s: number of products. */
+			_n( '%s product', '%s products', $products, 'bulk-price-converter-for-woocommerce' ),
+			number_format_i18n( $products )
+		);
+		if ( $variations > 0 ) {
+			$text = sprintf(
+				/* translators: 1: number of products, e.g. "3 products". 2: number of variations, e.g. "12 variations". */
+				__( '%1$s with %2$s', 'bulk-price-converter-for-woocommerce' ),
+				$text,
+				sprintf(
+					/* translators: %s: number of variations. */
+					_n( '%s variation', '%s variations', $variations, 'bulk-price-converter-for-woocommerce' ),
+					number_format_i18n( $variations )
+				)
+			);
+		}
+		return $text;
+	}
+
+	/**
+	 * get_undo_html.
+	 *
+	 * @version 2.1.0
+	 * @since   2.1.0
+	 */
+	function get_undo_html() {
+		$html = '';
+
+		// Result of an undo that just ran
+		$notice_key = 'alg_wc_bpc_undo_notice_' . get_current_user_id();
+		$notice     = get_transient( $notice_key );
+		if ( false !== $notice ) {
+			delete_transient( $notice_key );
+			if ( is_array( $notice ) && isset( $notice['products'], $notice['variations'] ) ) {
+				$html .= '<div class="notice notice-success inline"><p><strong>' . esc_html( sprintf(
+					/* translators: %s: number of products, e.g. "3 products" or "3 products with 12 variations". */
+					__( 'Undo done. Prices are back to what they were before the last change, for %s.', 'bulk-price-converter-for-woocommerce' ),
+					$this->get_products_count_text( $notice['products'], $notice['variations'] )
+				) ) . '</strong></p></div>';
+			} else {
+				$html .= '<div class="notice notice-warning inline"><p><strong>' .
+					esc_html__( 'There is no price change to undo.', 'bulk-price-converter-for-woocommerce' ) .
+				'</strong></p></div>';
+			}
+		}
+
+		// Last change that can be undone
+		$html .= '<div class="card">';
+		$html .= '<h2>' . esc_html__( 'Undo last change', 'bulk-price-converter-for-woocommerce' ) . '</h2>';
+		$info  = alg_wc_bulk_price_converter()->undo->get_info();
+		if ( $info ) {
+			$time  = (int) $info['time'];
+			$date  = $this->format_time( get_option( 'date_format' ), $time );
+			$hour  = $this->format_time( get_option( 'time_format' ), $time );
+			$html .= '<p>' . esc_html( sprintf(
+				/* translators: 1: number of products, e.g. "3 products with 12 variations". 2: date. 3: time. */
+				__( 'Last change: %1$s, on %2$s at %3$s.', 'bulk-price-converter-for-woocommerce' ),
+				$this->get_products_count_text( $info['products'], $info['variations'] ),
+				$date,
+				$hour
+			) ) . '</p>';
+			$html .= '<form method="post" action="">';
+			$html .= '<p><input class="button" type="submit" name="alg_wc_bpc_undo" id="alg_wc_bpc_undo" value="' .
+				esc_attr__( 'Undo last change', 'bulk-price-converter-for-woocommerce' ) . '"' .
+				' onclick="return confirm(\'' . esc_js( __( 'Put back the prices from before the last change? Prices you edited by hand on these products since then are replaced too.', 'bulk-price-converter-for-woocommerce' ) ) . '\')"></p>';
+			$html .= wp_nonce_field( 'alg_wc_bpc_undo_action', 'alg_wc_bpc_undo_nonce', true, false );
+			$html .= '</form>';
+		} else {
+			$html .= '<p>' . esc_html__( 'Nothing to undo yet. After you change prices, you can put the old prices back from here until you change prices again.', 'bulk-price-converter-for-woocommerce' ) . '</p>';
+		}
+		$html .= '</div>';
+
+		return $html;
+	}
+
+	/**
+	 * format_time.
+	 *
+	 * @version 2.1.0
+	 * @since   2.1.0
+	 *
+	 * @param   string $format    Date or time format.
+	 * @param   int    $timestamp Unix timestamp.
+	 * @return  string Formatted in the site's time zone.
+	 */
+	function format_time( $format, $timestamp ) {
+		return ( function_exists( 'wp_date' ) ?
+			wp_date( $format, $timestamp ) :
+			date_i18n( $format, $timestamp + (int) ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) )
+		);
 	}
 
 	/**
@@ -111,13 +244,13 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * add_bulk_price_converter_tool.
 	 *
-	 * @version 1.4.0
+	 * @version 2.1.0
 	 */
 	function add_bulk_price_converter_tool() {
 		add_submenu_page(
 			'woocommerce',
-			__( 'Bulk Price Converter Tool', 'bulk-price-converter-for-woocommerce' ),
-			__( 'Bulk Price Converter', 'bulk-price-converter-for-woocommerce' ),
+			__( 'Bulk Price Editor', 'bulk-price-converter-for-woocommerce' ),
+			__( 'Bulk Price Editor', 'bulk-price-converter-for-woocommerce' ),
 			'manage_woocommerce',
 			'alg-wc-bulk-price-converter-tool',
 			array( $this, 'create_bulk_price_converter_tool' )
@@ -127,7 +260,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 	/**
 	 * create_bulk_price_converter_tool.
 	 *
-	 * @version 2.0.5
+	 * @version 2.1.0
 	 *
 	 * @todo    [dev] (maybe) allow "Multiply all product prices by" to be zero
 	 * @todo    [dev] rewrite (`get_tool_options()`)
@@ -147,15 +280,16 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 		$html  = '';
 		$html .= '<div class="wrap">';
 		$html .= '<a style="float: right;" href="' . admin_url( 'admin.php?page=wc-settings&tab=alg_wc_bulk_price_converter' ) . '">' .
-			__( 'Bulk Price Converter plugin settings', 'bulk-price-converter-for-woocommerce' ) . '</a>';
-		$html .= '<h1>' . __( 'Bulk Price Converter Tool', 'bulk-price-converter-for-woocommerce' ) . '</h1>';
+			__( 'Bulk Price Editor settings', 'bulk-price-converter-for-woocommerce' ) . '</a>';
+		$html .= '<h1>' . __( 'Bulk Price Editor', 'bulk-price-converter-for-woocommerce' ) . '</h1>';
+		$html .= $this->get_undo_html();
 		$html .= '<form method="post" action="">';
 		// General Options
 		$html .= '<h2>' . __( 'General Options', 'bulk-price-converter-for-woocommerce' ) . '</h2>' . apply_filters( 'alg_wc_bpc_settings',
 			' <p><em>' . sprintf(
 				/* translators: %s: link to the Pro version. */
 				__( 'You will need %s plugin to use Divide and Subtract options in this section.', 'bulk-price-converter-for-woocommerce' ),
-				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Converter Pro</a>' ) . '</em></p>' );
+				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Editor Pro</a>' ) . '</em></p>' );
 
 		$html .= '<h2>' . __( 'General Options', 'bulk-price-converter-for-woocommerce' ) . '</h2>';
 		$data_table = array();
@@ -208,7 +342,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			' <p><em>' . sprintf(
 				/* translators: %s: link to the Pro version. */
 				__( 'Except for Category, you will need %s plugin to change values in this section.', 'bulk-price-converter-for-woocommerce' ),
-				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Converter Pro</a>' ) . '</em></p>' );
+				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Editor Pro</a>' ) . '</em></p>' );
 		$data_table = array();
 		$data_table[] = array(
 			__( 'Products <strong>category</strong>', 'bulk-price-converter-for-woocommerce' ),
@@ -246,7 +380,7 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 			' <p><em>' . sprintf(
 				/* translators: %s: link to the Pro version. */
 				__( 'You will need %s plugin to change values in this section.', 'bulk-price-converter-for-woocommerce' ),
-				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Converter Pro</a>' ) . '</em></p>' );
+				'<a target="_blank" href="https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/">Bulk Price Editor Pro</a>' ) . '</em></p>' );
 		$data_table = array();
 		$data_table[] = array(
 				'<strong>' . __( 'Rounding function', 'bulk-price-converter-for-woocommerce' ) . '</strong>',
@@ -283,8 +417,8 @@ class Alg_WC_Bulk_Price_Converter_Tool {
 		$html .= ' <input class="button-primary" type="submit" name="alg_wc_bpc_change_prices" id="alg_wc_bpc_change_prices"' .
 			' style="background: red; border-color: red; box-shadow: 0 1px 0 red; text-shadow: 0 -1px 1px #a00,1px 0 1px #a00,0 1px 1px #a00,-1px 0 1px #a00;"' .
 			' value="' . __( 'Change prices', 'bulk-price-converter-for-woocommerce' ) . '"' .
-			' onclick="return confirm(\'' . __( 'There is no undo for this action.', 'bulk-price-converter-for-woocommerce' ) . ' ' .
-				__( 'Are you sure?', 'bulk-price-converter-for-woocommerce' ) . '\')">';
+			' onclick="return confirm(\'' . esc_js( __( 'You can undo this change from this page until you change prices again.', 'bulk-price-converter-for-woocommerce' ) . ' ' .
+				__( 'Are you sure?', 'bulk-price-converter-for-woocommerce' ) ) . '\')">';
 		$html .= ' <a class="button" href="">' . __( 'Reset', 'bulk-price-converter-for-woocommerce' ) . '</a>';
 		$html .= '</p>';
 		$html .= wp_nonce_field( 'alg_wc_bpc_action', 'alg_wc_bpc_nonce', true, false );

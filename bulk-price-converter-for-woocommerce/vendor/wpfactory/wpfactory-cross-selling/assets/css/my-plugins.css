@@ -1,0 +1,90 @@
+/* My Plugins page. Layout on top of my-plugins-ui-kit.css. Every rule is scoped to .wpf-myplugins. */
+
+/* Fill the admin content area with the kit's cream background. */
+.wpf-myplugins{margin:0 0 0 -20px;min-height:calc(100vh - 32px);background:var(--ak-bg);color:var(--ak-ink);font:14px/1.45 var(--ak-font)}
+.wpf-myplugins *{box-sizing:border-box}
+.wpf-myplugins a{color:var(--ak-accent-ink)}
+.wpf-myplugins a.ak-btn-primary,.wpf-myplugins a.ak-btn-secondary{color:var(--ak-ink)}
+.wpf-myplugins .screen-reader-text{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(1px,1px,1px,1px);white-space:nowrap}
+
+/* Top bar: below the WordPress admin bar. */
+.wpf-myplugins .wpf-mp-topbar{top:32px;flex-wrap:wrap;gap:var(--ak-s4);padding:10px 16px;justify-content:flex-start}
+.wpf-myplugins .wpf-mp-brand-mark{background:#3858E9;color:#fff}
+.wpf-myplugins .ak-nav{flex-wrap:wrap}
+.wpf-myplugins .ak-nav a{text-decoration:none}
+.wpf-myplugins .ak-nav a.on{color:#fff}
+.wpf-myplugins .wpf-mp-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ak-accent)}
+
+/* Page. */
+.wpf-myplugins .wpf-mp-page{display:flex;flex-direction:column;gap:var(--ak-s8);padding:var(--ak-s8) var(--ak-s4) 64px}
+.wpf-myplugins .wp-header-end{margin:0}
+.wpf-myplugins .wpf-mp-section{display:flex;flex-direction:column;gap:var(--ak-s3)}
+.wpf-myplugins .wpf-mp-h1{font-size:30px;line-height:1.15;margin:0;padding:0;font-weight:700;color:var(--ak-ink)}
+.wpf-myplugins .wpf-mp-h2{font-size:20px;line-height:1.3;margin:0;font-weight:700;color:var(--ak-ink)}
+.wpf-myplugins .wpf-mp-h3{font-size:17px;line-height:1.3;margin:0;font-weight:700;color:var(--ak-ink)}
+.wpf-myplugins .wpf-mp-lead{margin:6px 0 0;font-size:15px;color:var(--ak-muted)}
+.wpf-myplugins .wpf-mp-note{margin:4px 0 0;font-size:13px;color:var(--ak-muted)}
+.wpf-myplugins .wpf-mp-muted{font-size:13px;color:var(--ak-muted)}
+.wpf-myplugins p{font-size:14px}
+.wpf-myplugins .wpf-mp-error{grid-column:1/-1;margin:0;font-size:13px;font-weight:600;color:var(--ak-bad)}
+.wpf-myplugins .wpf-mp-error[hidden]{display:none}
+
+/* My plugins (owned). */
+.wpf-myplugins .wpf-mp-owned-row{display:grid;grid-template-columns:minmax(0,1fr) 130px 150px;gap:var(--ak-s3);align-items:center;padding:var(--ak-s3) var(--ak-s5);border-bottom:1px solid var(--ak-line)}
+.wpf-myplugins .wpf-mp-chip{justify-self:start}
+.wpf-myplugins .wpf-mp-owned-action{justify-self:end;display:flex;align-items:center}
+.wpf-myplugins .wpf-mp-allaccess{display:flex;justify-content:space-between;align-items:center;gap:var(--ak-s4);flex-wrap:wrap;padding:var(--ak-s4) var(--ak-s5);background:var(--ak-accent-soft)}
+.wpf-myplugins .wpf-mp-allaccess-text{display:flex;flex-direction:column;gap:2px;max-width:680px}
+
+/* Picked for your store. */
+/* 3 columns, or 1 below 1000px: never a 2 + 1 orphan. */
+.wpf-myplugins .wpf-mp-picks{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--ak-s4)}
+.wpf-myplugins .wpf-mp-pick{display:flex;flex-direction:column}
+.wpf-myplugins .wpf-mp-reason{padding:10px var(--ak-s5);background:var(--ak-surface-2);border-bottom:1px solid var(--ak-line);font-size:13px;font-weight:600;color:var(--ak-accent-ink)}
+.wpf-myplugins .wpf-mp-pick-body{padding:var(--ak-s4) var(--ak-s5);display:flex;flex-direction:column;gap:6px;flex-grow:1}
+.wpf-myplugins .wpf-mp-pick-body p{margin:0;color:var(--ak-muted)}
+.wpf-myplugins .wpf-mp-pick-foot{padding:var(--ak-s3) var(--ak-s5);border-top:1px solid var(--ak-line)}
+.wpf-myplugins .wpf-mp-pick-foot .wpf-mp-actions{justify-content:space-between}
+.wpf-myplugins .wpf-mp-pick .wpf-mp-error{padding:0 var(--ak-s5) var(--ak-s3)}
+
+/* All WPFactory plugins. */
+.wpf-myplugins .wpf-mp-catalog-head{display:flex;justify-content:space-between;align-items:flex-end;gap:var(--ak-s3);flex-wrap:wrap}
+.wpf-myplugins .wpf-mp-search{display:flex;gap:var(--ak-s2);align-items:center}
+.wpf-myplugins .wpf-mp-search span{font-size:13px;font-weight:600}
+.wpf-myplugins .wpf-mp-search .ak-input{height:36px;width:240px;max-width:100%}
+.wpf-myplugins .wpf-mp-tabs{flex-wrap:wrap;align-self:flex-start}
+.wpf-myplugins .wpf-mp-tabs button:focus-visible,.wpf-myplugins .ak-input:focus-visible{outline:3px solid var(--ak-accent);outline-offset:2px}
+.wpf-myplugins .wpf-mp-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:var(--ak-s3);align-items:center;padding:var(--ak-s3) var(--ak-s5);border-bottom:1px solid var(--ak-line)}
+.wpf-myplugins .wpf-mp-row[hidden],.wpf-myplugins .wpf-mp-empty[hidden]{display:none}
+.wpf-myplugins .wpf-mp-row.is-last{border-bottom:0}
+.wpf-myplugins .wpf-mp-row-main{display:flex;gap:var(--ak-s3);align-items:center;min-width:0}
+.wpf-myplugins .wpf-mp-row-main .ak-chip{margin-left:4px}
+.wpf-myplugins .wpf-mp-logo{width:40px;height:40px;flex-shrink:0;border-radius:10px;display:block}
+.wpf-myplugins .wpf-mp-logo-badge{display:flex;align-items:center;justify-content:center;background:var(--ak-surface-2);border:1px solid var(--ak-line-strong);font-size:13px;font-weight:700;color:var(--ak-muted)}
+.wpf-myplugins .wpf-mp-actions{display:flex;gap:var(--ak-s2);align-items:center;justify-content:flex-end;flex-wrap:wrap}
+.wpf-myplugins .wpf-mp-empty{margin:0;padding:var(--ak-s5);color:var(--ak-muted)}
+.wpf-myplugins .wpf-mp-done{font-size:13px;font-weight:600;color:var(--ak-ok)}
+
+@media screen and (max-width:999px){
+  .wpf-myplugins .wpf-mp-picks{grid-template-columns:minmax(0,1fr)}
+}
+
+/* WordPress admin goes to its mobile layout at 782px. */
+@media screen and (max-width:782px){
+  .wpf-myplugins{margin-left:-10px;min-height:calc(100vh - 46px)}
+  .wpf-myplugins .wpf-mp-topbar{top:46px;position:static}
+  .wpf-myplugins .wpf-mp-page{padding:var(--ak-s6) var(--ak-s4) 48px;gap:var(--ak-s6)}
+  .wpf-myplugins .wpf-mp-owned-row{grid-template-columns:minmax(0,1fr) auto;padding:var(--ak-s3) var(--ak-s4)}
+  .wpf-myplugins .wpf-mp-owned-action{grid-column:1/-1;justify-self:start}
+  .wpf-myplugins .wpf-mp-row{grid-template-columns:1fr;padding:var(--ak-s3) var(--ak-s4)}
+  .wpf-myplugins .wpf-mp-row .wpf-mp-actions{justify-content:flex-start;padding-left:52px}
+  .wpf-myplugins .wpf-mp-search{width:100%}
+  .wpf-myplugins .wpf-mp-search .ak-input{flex:1;width:auto}
+}
+
+/* Job tabs: one row that scrolls sideways. */
+@media screen and (max-width:599px){
+  .wpf-myplugins .wpf-mp-tabs{display:flex;flex-wrap:nowrap;align-self:stretch;max-width:100%;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;-webkit-overflow-scrolling:touch}
+  .wpf-myplugins .wpf-mp-tabs button{flex:0 0 auto;white-space:nowrap}
+  .wpf-myplugins .wpf-mp-tabs button:focus-visible{outline-offset:-3px}
+}

@@ -3,7 +3,7 @@
 Plugin Name: Price Update: Bulk Pricing Editor for WooCommerce
 Plugin URI: https://wpfactory.com/item/bulk-price-converter-for-woocommerce-plugin/
 Description: Save your time with all-in-one bulk price converter for all your WooCommerce store products, change your prices, add a fixed amount or multiply prices for all your products with a couple of clicks.
-Version: 2.0.6
+Version: 2.1.0
 Author: WPFactory
 Author URI: https://wpfactory.com
 Requires at least: 4.4
@@ -33,7 +33,7 @@ final class Alg_WC_Bulk_Price_Converter {
 	 * @var   string
 	 * @since 1.2.0
 	 */
-	public $version = '2.0.6';
+	public $version = '2.1.0';
 
 	/**
 	 * @var Alg_WC_Bulk_Price_Converter The single instance of the class
@@ -47,6 +47,14 @@ final class Alg_WC_Bulk_Price_Converter {
 	 * @since   2.0.0
 	 */
 	public $core;
+
+	/**
+	 * undo.
+	 *
+	 * @version 2.1.0
+	 * @since   2.1.0
+	 */
+	public $undo;
 
 	/**
 	 * Main Alg_WC_Bulk_Price_Converter Instance.
@@ -144,11 +152,13 @@ final class Alg_WC_Bulk_Price_Converter {
 	/**
 	 * Include required core files used in admin and on the frontend.
 	 *
-	 * @version 1.4.1
+	 * @version 2.1.0
 	 */
 	function includes() {
 		// Core
 		$this->core = require_once( 'includes/class-alg-wc-bulk-price-converter-core.php' );
+		// Undo
+		$this->undo = require_once( 'includes/class-alg-wc-bulk-price-converter-undo.php' );
 		// Tool
 		require_once( 'includes/class-alg-wc-bulk-price-converter-tool.php' );
 	}
@@ -200,7 +210,7 @@ final class Alg_WC_Bulk_Price_Converter {
 	/**
 	 * move_wc_settings_tab_to_wpfactory_submenu.
 	 *
-	 * @version 2.0.0
+	 * @version 2.1.0
 	 * @since   2.0.0
 	 *
 	 * @return  void
@@ -214,7 +224,7 @@ final class Alg_WC_Bulk_Price_Converter {
 		if ( method_exists( $wpf_admin_menu, 'move_wc_settings_tab_to_wpfactory_menu' ) ) {
 			$wpf_admin_menu->move_wc_settings_tab_to_wpfactory_menu( array(
 				'wc_settings_tab_id' => 'alg_wc_bulk_price_converter',
-				'menu_title'         => __( 'Bulk Price Converter', 'bulk-price-converter-for-woocommerce' ),
+				'menu_title'         => __( 'Bulk Price Editor', 'bulk-price-converter-for-woocommerce' ),
 				'page_title'         => __( 'Price Update: Bulk Pricing Editor for WooCommerce', 'bulk-price-converter-for-woocommerce' ),
 				'plugin_icon'        => array(
 					'get_url_method'    => 'wporg_plugins_api',

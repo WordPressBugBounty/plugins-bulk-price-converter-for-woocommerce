@@ -75,6 +75,18 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\Recommendations_Page' ) 
 		}
 
 		/**
+		 * my_plugins_booted.
+		 *
+		 * @version 1.2.0
+		 * @since   1.2.0
+		 *
+		 * @return bool
+		 */
+		function my_plugins_booted() {
+			return defined( 'WPFACTORY_MY_PLUGINS_DIR' );
+		}
+
+		/**
 		 * enqueue_wcfcs_css_on_recommendations_page.
 		 *
 		 * @version 1.0.4
@@ -107,7 +119,7 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\Recommendations_Page' ) 
 			$setup_args     = $this->get_wpfactory_cross_selling()->get_setup_args();
 			$action_link    = $setup_args['recommendations_page']['action_link'] ?? '';
 			$label          = $action_link['label'] ?? '';
-			$link           = admin_url( 'admin.php?page=' . $this->recommendations_page_slug );
+			$link           = admin_url( 'admin.php?page=' . ( $this->my_plugins_booted() ? 'wpfactory-my-plugins' : $this->recommendations_page_slug ) );
 			$target         = '_self';
 			$custom_links[] = sprintf( '<a href="%s" target="%s">%s</a>', esc_url( $link ), sanitize_text_field( $target ), sanitize_text_field( $label ) );
 			$links          = array_merge( $links, $custom_links );
@@ -124,7 +136,9 @@ if ( ! class_exists( 'WPFactory\WPFactory_Cross_Selling\Recommendations_Page' ) 
 		 * @return void
 		 */
 		function create_recommendations_submenu() {
-			if ( self::$recommendations_submenu_initialized ) {
+			// Since 1.2.0 the My Plugins page replaces this one. It is only registered
+			// when My Plugins could not boot (its loader is missing from this plugin's autoload).
+			if ( self::$recommendations_submenu_initialized || $this->my_plugins_booted() ) {
 				return;
 			}
 			self::$recommendations_submenu_initialized = true;

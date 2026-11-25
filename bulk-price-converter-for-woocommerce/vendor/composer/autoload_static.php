@@ -6,13 +6,23 @@ namespace Composer\Autoload;
 
 class ComposerStaticInitWPFactoryBulkPriceConverterForWooCommerce
 {
+    public static $files = array (
+        'c8d460c769879e4903cad859e3e806fc' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/loader.php',
+    );
+
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'WPFactory\\WPFactory_Admin_Menu\\Plugin_Icon' => __DIR__ . '/..' . '/wpfactory/wpfactory-admin-menu/src/php/class-plugin-icon.php',
         'WPFactory\\WPFactory_Admin_Menu\\Singleton' => __DIR__ . '/..' . '/wpfactory/wpfactory-admin-menu/src/php/trait-singleton.php',
         'WPFactory\\WPFactory_Admin_Menu\\WC_Settings_Menu_Item_Swapper' => __DIR__ . '/..' . '/wpfactory/wpfactory-admin-menu/src/php/class-wc-settings-menu-item-swapper.php',
         'WPFactory\\WPFactory_Admin_Menu\\WPFactory_Admin_Menu' => __DIR__ . '/..' . '/wpfactory/wpfactory-admin-menu/src/php/class-wpfactory-admin-menu.php',
-        'WPFactory\\WPFactory_Cross_Selling\\Banners' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/class-banners.php',
+        'WPFactory\\WPFactory_Cross_Selling\\My_Plugins\\Catalog' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/class-catalog.php',
+        'WPFactory\\WPFactory_Cross_Selling\\My_Plugins\\Installer' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/class-installer.php',
+        'WPFactory\\WPFactory_Cross_Selling\\My_Plugins\\Page' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/class-page.php',
+        'WPFactory\\WPFactory_Cross_Selling\\My_Plugins\\Plugin' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/class-plugin.php',
+        'WPFactory\\WPFactory_Cross_Selling\\My_Plugins\\Rules_Engine' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/class-rules-engine.php',
+        'WPFactory\\WPFactory_Cross_Selling\\My_Plugins\\Signals' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/class-signals.php',
+        'WPFactory\\WPFactory_Cross_Selling\\My_Plugins\\Site_State' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/my-plugins/class-site-state.php',
         'WPFactory\\WPFactory_Cross_Selling\\Product_Categories' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/class-product-categories.php',
         'WPFactory\\WPFactory_Cross_Selling\\Products' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/class-products.php',
         'WPFactory\\WPFactory_Cross_Selling\\Recommendation_Box_Tags' => __DIR__ . '/..' . '/wpfactory/wpfactory-cross-selling/src/php/class-recommendation-box-tags.php',

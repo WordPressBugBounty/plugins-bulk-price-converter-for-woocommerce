@@ -53,17 +53,17 @@
         },
         {
             "name": "wpfactory/wpfactory-cross-selling",
-            "version": "v1.1.7",
-            "version_normalized": "1.1.7.0",
+            "version": "v1.2.0",
+            "version_normalized": "1.2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wpcodefactory/wpfactory-cross-selling.git",
-                "reference": "0fb1b6ddca7956b1608275dc8ff5e2e7f7bbd495"
+                "reference": "fd2d6e2e7f0a48ecdd89710733c066ec05011d22"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wpcodefactory/wpfactory-cross-selling/zipball/0fb1b6ddca7956b1608275dc8ff5e2e7f7bbd495",
-                "reference": "0fb1b6ddca7956b1608275dc8ff5e2e7f7bbd495",
+                "url": "https://api.github.com/repos/wpcodefactory/wpfactory-cross-selling/zipball/fd2d6e2e7f0a48ecdd89710733c066ec05011d22",
+                "reference": "fd2d6e2e7f0a48ecdd89710733c066ec05011d22",
                 "shasum": ""
             },
             "require": {
@@ -73,12 +73,15 @@
                 "composer/composer": "^2.10.3",
                 "wp-cli/wp-cli-bundle": "*"
             },
-            "time": "2026-10-06T18:59:26+00:00",
+            "time": "2026-11-25T08:41:35+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
                 "classmap": [
                     "src/php/"
+                ],
+                "files": [
+                    "src/php/my-plugins/loader.php"
                 ]
             },
             "scripts": {
@@ -101,7 +104,7 @@
                 ]
             },
             "support": {
-                "source": "https://github.com/wpcodefactory/wpfactory-cross-selling/tree/v1.1.7",
+                "source": "https://github.com/wpcodefactory/wpfactory-cross-selling/tree/v1.2.0",
                 "issues": "https://github.com/wpcodefactory/wpfactory-cross-selling/issues"
             },
             "install-path": "../wpfactory/wpfactory-cross-selling"
